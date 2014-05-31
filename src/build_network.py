@@ -180,9 +180,10 @@ def main(argv):
   
   log.info('tree building over')
   # log.info("time for buildMCTree(): %f ms" % ((stopBuildMCTree-startBuildMCTree)*1000.0))
-  
-  log.info('tree clients: %s' % T.clients())
 
+  # log tree information
+  T.log()
+  
   j = '-'.join(map(str, events))
 
   # uncomment to write an image representation of the graph+tree

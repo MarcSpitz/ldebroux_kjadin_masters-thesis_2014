@@ -254,7 +254,7 @@ class Utils:
 
   @staticmethod
   def gen_client_list(adds, removals, nodes, clients):
-    # TODO: add the capability to have a root different than 0
+    # @todo: add the capability to have a root different than 0
     # wether it is done in the specs or in the code
     a = adds
     r = removals
@@ -363,36 +363,6 @@ class Utils:
     # print eventDict
     
     # return eventDict
-
-  @staticmethod
-  def ensurePIMTree(T):
-    log.debug("ensurePIMTree")
-
-    NG = T.NetworkGraph
-
-    clients = T.C
-    root = T.root
-
-    # compute PIM tree edges
-    shortestPaths = [NG.ShortestPaths[root][c][0] for c in clients]
-    log.debug("shortestPaths %s" % shortestPaths)
-
-    PIMTreeEdgesSet = set()
-    
-    for nodesPath in shortestPaths:
-      edgesPath = T.nodePathToEdgePath(nodesPath)
-      PIMTreeEdgesSet |= set(edgesPath)
-
-    log.debug("PIMTreeEdgesSet %s" % PIMTreeEdgesSet)
-    
-    # this tree edges
-    treeEdgesSet = set(T.edges())
-
-    diff = PIMTreeEdgesSet ^ treeEdgesSet
-
-    log.debug("diff %s" % diff)
-    if diff:
-      raise Exception("the given tree does not follow the PIM mode for tree building!")
 
   @staticmethod
   def getTimeString():

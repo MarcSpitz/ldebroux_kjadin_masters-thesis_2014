@@ -42,13 +42,15 @@ class MulticastTree(nx.DiGraph):
     self.childrenPaths  = {}
     self.parentPaths    = {}
 
-    # define used class methods
-
+    # linking the right method according to arguments (codegen)
     self.export_step_codegen(Setup.get('steps'))
     self.selectEdge = self.selectEdge_choose(Setup.get('selection_heuristic'))
 
-  def log(self):
-    log.info()
+  def log(self, lvl=log.INFO):
+    log.log(lvl, ">>> tree information")
+    log.log(lvl, "\tweight: %s"     % self.weight)
+    log.log(lvl, "\troot: %s"       % self.root)
+    log.log(lvl, "\ttree clients: %s" % self.clients())
 
   def multicastTreeCopy(self):
     """ returns a complete copy of the tree """
@@ -76,8 +78,8 @@ class MulticastTree(nx.DiGraph):
 
     return MCTcopy
 
-
   def export_step_codegen(self, method):
+    """ codegen the right exporting method for self.export_step() """
     fname = "export_step"
     if(method == Setup.PLOT):
       def inner(self, outfile):
@@ -92,10 +94,8 @@ class MulticastTree(nx.DiGraph):
     inner.__name__ = fname
     setattr(self.__class__, inner.__name__, inner)
 
-  """
-  Return the right selectEdge heuristic according to given argument
-  """
   def selectEdge_choose(self, heuristic):
+    """ returns the right selectEdge heuristic according to given argument """
     if(heuristic == Setup.MOST_EXPENSIVE):
       return self.selectEdge_mostExpensive
     elif(heuristic == Setup.MOST_EXPENSIVE_PATH):
@@ -109,16 +109,14 @@ class MulticastTree(nx.DiGraph):
     else: # use random selection heuristic
       return self.selectEdge_random
 
-  """
-  @param outfile : string for filename with supported extension {pdf, png}
-  """
   def export_file(self, outfile):
-
+    """
+    @param outfile : string for filename with supported extension {pdf, png}
+    """
     import pylab
     pylab.figure(figsize=(50,50))
 
     self.draw()
-
     pylab.savefig(outfile)
 
   def export_plot(self):
@@ -129,10 +127,9 @@ class MulticastTree(nx.DiGraph):
     # clean plot
     plt.clf()
 
-  """ 
-  draw the tree on top of the graph 
-  """
+  
   def draw(self):
+    """ draw the tree on top of the graph """
     # draw the graph except the current tree
     graphOnlyEdges = list(set(self.NetworkGraph.edges()) - set(self.edges()))
     graphOnlyNodes = list(set(self.NetworkGraph.nodes()) - set(self.nodes()))
@@ -153,26 +150,19 @@ class MulticastTree(nx.DiGraph):
     clientsWithoutRoot = set(self.C) - set([self.root])
     nx.draw_networkx_nodes(self, self.NetworkGraph.layout, nodelist=clientsWithoutRoot, node_color='blue', node_size=nodeSize)
     # draw the edges
-    edgeLabels=dict([((u,v,),d['weight'])
-             for u,v,d in self.NetworkGraph.edges(data=True)])
+    edgeLabels=dict([((u,v,),d['weight']) for u,v,d in self.NetworkGraph.edges(data=True)])
     nx_pylab.draw_networkx_edges(self, self.NetworkGraph.layout, width=2.0, arrow=True, edge_color='red')
     nx.draw_networkx_edge_labels(self, self.NetworkGraph.layout, edge_labels=edgeLabels, label_pos=0.5, font_color='grey')
-
 
   def addClient(self, c):
 
     log.debug('adding client %s' % c)
-
     if not c in self.nodes():
-
       pim_mode = Setup.get('pim_mode')
       log.debug('PIM mode: %s' % pim_mode)
 
       if pim_mode:
         cleanedClosestPath = self.shortestPathToSource(c)
-        # @todo: the following line is a test, can be disabled
-        # log.warning("ensuring if the tree follows PIM mode..")
-        # Utils.ensurePIMTree(self)
       else:
         cleanedClosestPath = self.shortestPathToTree(c)
 
@@ -1007,3 +997,32 @@ class MulticastTree(nx.DiGraph):
 
     # there is no loop in the tree
     assert len(self.nodes()) == len(self.edges()) + 1
+
+  def validatePIMTree(self):
+    log.debug("ensurePIMTree")
+    
+    T = self
+    NG      = T.NetworkGraph
+    clients = T.C
+    root    = T.root
+
+    # compute PIM tree edges
+    shortestPaths = [NG.ShortestPaths[root][c][0] for c in clients]
+    log.debug("shortestPaths %s" % shortestPaths)
+
+    PIMTreeEdgesSet = set()
+    
+    for nodesPath in shortestPaths:
+      edgesPath = T.nodePathToEdgePath(nodesPath)
+      PIMTreeEdgesSet |= set(edgesPath)
+
+    log.debug("PIMTreeEdgesSet %s" % PIMTreeEdgesSet)
+    
+    # this tree edges
+    treeEdgesSet = set(T.edges())
+
+    diff = PIMTreeEdgesSet ^ treeEdgesSet
+
+    log.debug("diff %s" % diff)
+    if diff:
+      raise Exception("the given tree does not follow the PIM mode for tree building!")
