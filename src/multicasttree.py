@@ -2,46 +2,34 @@
 # @author: Debroux Léonard  <leonard.debroux@gmail.com>
 # @author: Kevin Jadin      <contact@kjadin.com>
 
-# For the logging (as described in http://stackoverflow.com/questions/522730/how-can-i-strip-python-logging-calls-without-commenting-them-out):
-# use logging.disable http://docs.python.org/library/logging.html?highlight=logging#logging.disable
-# to disable the inner "getEffectiveLevel" traversal -> less time spent for interested loggers
-# if the logged message is heavy to compute, surround the logging.log call with this condition:
-# if logger.isEnabledFor(<logging-level>):
-# in order to avoid computing a message that will never be displayed
-
 import sys
 import networkx as nx
 import matplotlib.pyplot as plt
 import networkx.algorithms.dag as dag
 from operator import itemgetter
 from collections import OrderedDict
-import itertools
 import random
 import logging as log
 import nx_pylab
 from Queue import PriorityQueue
-from utils import Utils, deprecated
+from utils import Utils
 from setup import Setup
 import time
 import copy
 import math
-import sys
 
 
 class MulticastTree(nx.DiGraph):
   """ MulticastTree class """
   def __init__(self, NetworkGraph, root):
-    #todo: verify that all variables are useful
     super(MulticastTree, self).__init__()
+
     self.NetworkGraph = NetworkGraph
     self.C            = set() # empty client set
     self.root         = root  # root of the tree
     self.improvements = 0  #amount of improvements made (addition and removal)
 
     self.weight       = 0  # weight of the tree (to be updated after every tree modification)
-    
-    self.NetworkGraphNodes = frozenset(NetworkGraph.nodes()) # should be array of integers
-    self.NetworkGraphEdges = frozenset(NetworkGraph.edges()) # should be array of integer pairs
 
     self.C.add(root)
     self.add_node(root)   # add the root
@@ -127,6 +115,7 @@ class MulticastTree(nx.DiGraph):
     """
     import pylab
     pylab.figure(figsize=(50,50))
+
     self.draw()
     pylab.savefig(outfile)
 
@@ -206,13 +195,9 @@ class MulticastTree(nx.DiGraph):
     ShortestPathsLength = NG.ShortestPathsLength[client]
     log.debug('distances to nodes: "%s"' % ShortestPathsLength)
     PathsLengthToTree = {k: v[0] for k, v in ShortestPathsLength.items() if k in self.nodes()}
-    log.debug('PathsLengthToTree: %s' % PathsLengthToTree)
-    
-    SortedPathsLengthToTree = OrderedDict(sorted(PathsLengthToTree.items(), key=itemgetter(1)))
-    # SortedPathsLengthToTree = set(sorted(PathsLengthToTree.items(), key=lambda t: t[1]))
-    #SortedPathsLengthToTree = sorted(PathsLengthToTree, key=itemgetter(1)) 
+    log.debug('PathsLengthToTree: %s' % PathsLengthToTree)   
+    SortedPathsLengthToTree = OrderedDict(sorted(PathsLengthToTree.items(), key=itemgetter(1))) 
     log.debug('SortedPathsLengthToTree: %s' % SortedPathsLengthToTree)
-    # closestParent, parentLength = SortedPathsLengthToTree.popitem(last=True)
     closestParent, parentLength = SortedPathsLengthToTree.popitem(last=False)
     log.debug('closestParent: %s' % closestParent)
 
@@ -304,15 +289,13 @@ class MulticastTree(nx.DiGraph):
     for i in range(len(path) - 1):
       n1 = path[i]
       n2 = path[i+1]
-      # log.debug('NetworkGraph[%s][%s]' % (n1, n2))
-      # log.debug('                     = %s' % (NG[n1][n2]))
 
       edgeAttributes = NG[n1][n2]
       # build and add the edge to the tree edges set
       edgeUnique = (n1, n2) if n1<n2 else (n2, n1)
-      # log.info('have to add edge: (%s,%s)' % (n1, n2))
+      log.info('have to add edge: (%s,%s)' % (n1, n2))
       if not edgeUnique in GraphEdges:
-        raise Exception("WTH") #@todo
+        raise Exception("Tree is corrupted")
 
       self.add_edge(n1, n2, edgeAttributes)
       self.weight += self[n1][n2]['weight']
@@ -326,7 +309,7 @@ class MulticastTree(nx.DiGraph):
   Improves the tree
 
   # procedure: 3 étapes pour improve
-  # 1) virer une edge (retourner l'edge qu'on enlève)
+  # 1) enlever une edge (retourner l'edge qu'on enlève)
   # 2) nettoyer l'arbre cleanTree sur les deux noeuds qui étaient reliés par cette edge
   #     -> nettoyer les subtrees tq pour le subtree du haut, aucune feuille ne soit noire (supprime les noeuds noirs qui n'ont pas d'enfant)
   #                                                 du bas, pour que le root (enfant de l'edge) appartienne à C, ou bien qu'il ait un degré supérieur ou égale à 2
@@ -369,7 +352,7 @@ class MulticastTree(nx.DiGraph):
       print 'ERROR nodes:', self.number_of_nodes(), 'edges:', self.number_of_edges(), ': should not be reached'
       print 'edges', self.edges()
       print 'paths', self.pathQueue.queue
-      raise Exception('see above')
+      raise Exception('the multicast tree is does not represent a tree after an improveOnce call')
       # @todo: clean this exception
 
   """
@@ -402,8 +385,6 @@ class MulticastTree(nx.DiGraph):
         edges.remove(selectedEdge)
       else: 
         found = True
-    # How to get data of edge (n1,n2) ? to avoid getting the data for all edges
-    # return random.choice(self.edges(data=True))
     return selectedEdge
 
   """
@@ -512,14 +493,12 @@ class MulticastTree(nx.DiGraph):
   """
   def descendingClean(self, current, removedEdges):
     if (current in self.C) or (self.degree(current) >= 2):
-      # log.debug('current kept: %s' % current)
       return (current, removedEdges)
     else:
       child = self.successors(current)[0]
       self.remove_node(current)
       removedEdge = (current, child)
       removedEdges.append(removedEdge)
-      #log.debug('current removed: %s and child is: %s' % current, child)
       return self.descendingClean(child, removedEdges)
 
   """

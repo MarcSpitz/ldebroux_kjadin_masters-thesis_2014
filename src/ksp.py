@@ -51,13 +51,10 @@ def k_shortest_path(G, src, dst, K = 1):
   if K < 1:
     raise Exception("K must be higher than 1")
 
-  # dijkstra = nx.shortest_path
   dijkstra = nx.single_source_dijkstra
 
   # returns a single list of nodes from the source to the destination
   fullcost, fullpath = dijkstra(G, source = src, target = dst, weight = 'weight')
-
-  # print 'fullcost', fullcost
 
   cost = fullcost[dst]
   path = list(fullpath[dst])
@@ -74,9 +71,6 @@ def k_shortest_path(G, src, dst, K = 1):
       rootPath = Ak_path[:i+1]
       #recompute rootPath_cost based on the node list
       rootPath_cost = cost_from_path(G, rootPath)
-
-      # ankle = Ak_path[i] # joining the rootPath with the next to-be-found path      
-      # rootPath_cost = fullcost[ankle]
 
       for p_cost, p_path in A:
         if rootPath == p_path[:i+1]:
@@ -97,12 +91,6 @@ def k_shortest_path(G, src, dst, K = 1):
       G.remove_edges_from(rootPathAdjacentEdges)
       spurPath_cost, spurPath_path = dijkstra(G, source = spurNode, target = dst, weight='weight')
       G.add_edges_from(rootPathAdjacentEdges)
-
-      # calculate the spur path from the spur node to the target
-      # GC = G.copy() # work on a copy for dijkstra
-      # GC.remove_nodes_from(rootPath[:-1])
-      # spurPath_cost, spurPath_path = dijkstra(GC, source = spurNode, target = dst, weight='weight')
-      # no need to restore edges anymore
 
       if not dst in spurPath_path.keys():
         # dijkstra was not successful
@@ -139,12 +127,10 @@ def cost_from_path(G, path):
   return cost
 
 def get_shortest_paths(G, K):
-  # TODO: Optimization possible to avoid coputing several times same paths
-  #   Need to maintain a list of visited nodes n1 to bypass computation.
-  #   and then, reverse the lists to have the paths in the right direction
+
   shortestPath        = dict()
   shortestPathLength  = dict()
-  # The structure below (shortestPathCount) is redundant with the others, but could be used for convenience
+  # The structure below (shortestPathCount) is redundant with the others, but can be used for convenience
   shortestPathCount   = dict()
 
   nodes   = G.nodes()
@@ -156,10 +142,9 @@ def get_shortest_paths(G, K):
     shortestPathLength[n1]  = dict()
     shortestPathCount[n1]   = dict()
     
-    for j in range(i+1): #todo
+    for j in range(i+1):
       n2    = nodes[j]
       paths = k_shortest_path(G, n1, n2, K)
-      # print 'for n1', n1, 'and n2', n2, 'path', paths
       pathsToN2       = list()
       pathsToN2Length = list()
       pathsToN1       = list()
@@ -181,7 +166,6 @@ def get_shortest_paths(G, K):
       shortestPathLength[n2][n1]  = pathsToN1Length
       shortestPathCount[n2][n1]   = len(pathsToN1)    
 
-  # print '------------------', shortestPathLength
   return(shortestPath, shortestPathLength, shortestPathCount)
 
 
@@ -192,15 +176,12 @@ def testing(argv):
   weights = {e:1 for e in G.edges()}
   nx.set_edge_attributes(G, 'weight', weights)
   sp = k_shortest_path(G, 0, 1, K=7)
-  print sp
 
   sP, sPL, sPC = get_shortest_paths(G, 7)
-  print '---sP', sP
-  print '--sPL', sPL
-  print '--sPC', sPC
+  log.info('shortest paths: %s', sP)
+  log.info('shortest paths length: %s', sPL)
+  log.info('shortest paths count: %s', sPC)
 
-  print sP[0][1]
-  print sP[1][0]
 
 if __name__ == "__main__":
   import sys
