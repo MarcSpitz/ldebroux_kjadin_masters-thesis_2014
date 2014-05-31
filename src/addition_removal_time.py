@@ -58,9 +58,7 @@ class AdditionRemovalTimeTest(AbstractTest):
       for s in custom_setupDicts:
         setupIndex = custom_setupDicts.index(s)
         self.log_progression(dataSetIndex+1, len(dataSets), setupIndex+1, len(custom_setupDicts), self.testname)
-        
-        # @todo remove: i=0 # should be removed because completly useless
-        
+                
         Setup.reset_setup() # start from default
         Setup.configure(s)
         

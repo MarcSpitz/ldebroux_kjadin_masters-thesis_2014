@@ -85,9 +85,7 @@ class ComparisonTest(AbstractTest):
       for s in custom_setupDicts:
         setupIndex = custom_setupDicts.index(s)
         self.log_progression(dataSetIndex+1, len(dataSets), setupIndex+1, len(custom_setupDicts), self.testname)
-        
-        # @todo remove: i=0 # should be removed because completely useless
-        
+                
         Setup.reset_setup() # start from default
         Setup.configure(s)
         
@@ -139,6 +137,8 @@ class ComparisonTest(AbstractTest):
 
       # setupCostList contains percentages
       dataSetCostList.append(setupCostList)
+
+    f.close()
 
     setupResults = []
     for i in range(len(custom_setupDicts)): # go through the columns of the array

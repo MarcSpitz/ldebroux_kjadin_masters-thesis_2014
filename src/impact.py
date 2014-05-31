@@ -45,8 +45,9 @@ class ImpactTest(AbstractTest):
     else:
       dictionary[key] = [value]  
 
-  def writeImpact(edgesBefore, edgesAfter, weightBefore, weightAfter, improveNb, f):
-    writeNewline('improve %s/%s' % (i, nbOfImprove), f)
+  def writeImpact(self, edgesBefore, edgesAfter, weightBefore, weightAfter, improveNb, nbOfImprove, f):
+    writeNewline = self.writeNewline
+    writeNewline('improve %s/%s' % (improveNb, nbOfImprove), f)
     writeNewline('edges_before_improve: %s' % edgesBefore, f)
     writeNewline('weight_before_improve: %s' % weightBefore, f)
     writeNewline('edges_after_improve: %s' % edgesAfter, f)
@@ -90,9 +91,7 @@ class ImpactTest(AbstractTest):
       for s in custom_setupDicts:
         setupIndex = custom_setupDicts.index(s)
         self.log_progression(dataSetIndex+1, len(dataSets), setupIndex+1, len(custom_setupDicts), self.testname)
-        
-        # @todo remove: i = 0 # should be removed because completly useless
-        
+                
         Setup.reset_setup() # start from default
         Setup.configure(s)
         
@@ -112,7 +111,7 @@ class ImpactTest(AbstractTest):
           nbOfImprove = len(stateOfImprove)
           for (edgesBefore, edgesAfter, weightBefore, weightAfter) in stateOfImprove:
 
-            writeImpact(edgesBefore, edgesAfter, weightBefore, weightAfter, i, f)
+            self.writeImpact(edgesBefore, edgesAfter, weightBefore, weightAfter, i, nbOfImprove, f)
             i += 1
 
             impactedNodesAtStep = self.impactedNodes(edgesBefore, edgesAfter)
