@@ -5,4 +5,4 @@ weight_attribute    = WEIGHT
 
 root = 0
 
-shortest_paths_file = ../topologies/tiscali_sp
+shortest_paths_file = ../topologies/tiscali.sp
