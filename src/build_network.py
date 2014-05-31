@@ -180,6 +180,8 @@ def main(argv):
   
   log.info('tree building over')
   # log.info("time for buildMCTree(): %f ms" % ((stopBuildMCTree-startBuildMCTree)*1000.0))
+
+  T.log()
   
   log.info('tree clients: %s' % T.clients())
 
