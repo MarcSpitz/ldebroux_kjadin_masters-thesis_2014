@@ -294,7 +294,7 @@ class MulticastTree(nx.DiGraph):
       edgeUnique = (n1, n2) if n1<n2 else (n2, n1)
       log.debug('have to add edge: (%s,%s)' % (n1, n2))
       if not edgeUnique in GraphEdges:
-        raise Exception("Tree is corrupted")
+        raise Exception("tree is corrupted")
 
       self.add_edge(n1, n2, edgeAttributes)
       self.weight += self[n1][n2]['weight']
@@ -305,17 +305,12 @@ class MulticastTree(nx.DiGraph):
     return self.C
 
   def improveTreeOnce(self, nb, temperature):
-    """
-    performs one round of improvement on the tree
+    """ performs one round of improvement on the tree
 
-    # procedure: 3 étapes pour improve
-    # 1) enlever une edge (retourner l'edge qu'on enlève)
-    # 2) nettoyer l'arbre cleanTree sur les deux noeuds qui étaient reliés par cette edge
-    #     -> nettoyer les subtrees tq pour le subtree du haut, aucune feuille ne soit noire (supprime les noeuds noirs qui n'ont pas d'enfant)
-    #                                                 du bas, pour que le root (enfant de l'edge) appartienne à C, ou bien qu'il ait un degré supérieur ou égale à 2
-    #     -> 1 méthode par cas qui s'appelle récursivement après une supression
-    # 3) ajouter un nouveau chemin -> O(n^2) chercher le chemin le plus court pour lier les 2 arbres
-    # 3.5) inverser les edges (à faire dans la recherche du nouveau chemin, à l'étape 3)
+    # procedure: 3 steps for each round of improvement
+    # 1) select and remove one edge
+    # 2) clean the tree by launching cleanTree on the two nodes linked by the removed edge
+    # 3) add a new path -> O(n^2) search for the shortest path to link the two components
     """
     folder = "images/"
 
@@ -354,11 +349,9 @@ class MulticastTree(nx.DiGraph):
       raise Exception('the multicast tree is does not represent a tree after an improveOnce call')
       # @todo: clean this exception
 
-  """
-  Removes an edge from the tree
-  Uses selectEdge()
-  """
   def removeEdge(self):
+    """ removes an edge from the tree
+        Uses selectEdge() """
     # select an edge to remove
     edge = self.selectEdge()
     if edge:
@@ -369,10 +362,8 @@ class MulticastTree(nx.DiGraph):
     else:
       return None
 
-  """
-  Selects and returns an edge to remove according to a random heuristic
-  """
   def selectEdge_random(self):
+    """ randomly selects and returns an edge to remove from the tree """
     edges = self.edges(data=True)
     found = False
     selectedEdge = None
@@ -386,10 +377,8 @@ class MulticastTree(nx.DiGraph):
         found = True
     return selectedEdge
 
-  """
-  Selects and returns the most expensive edge
-  """
   def selectEdge_mostExpensive(self):
+    """ selects and returns the most expensive edge in the tree """
     edges = self.edges(data=True)
     selectedEdge = None
     weight = -1;
@@ -402,7 +391,7 @@ class MulticastTree(nx.DiGraph):
           selectedEdge = e
           weight = attr['weight']
           equalWeights = 2.0
-        elif attr['weight'] == weight:          
+        elif attr['weight'] == weight:
           if random.random() < 1/equalWeights:
             selectedEdge = e
             equalWeights += 1
@@ -410,6 +399,7 @@ class MulticastTree(nx.DiGraph):
 
 
   def selectEdge_mostExpensivePath(self):
+    """ selects and returns the most expensive edge in the tree """
     if self.usePathQueue:
       mostExpPath = self.popFirstValidPath(Setup.get('max_paths'))
       if mostExpPath:
@@ -432,20 +422,21 @@ class MulticastTree(nx.DiGraph):
 
 
   def updateTabu(self):
+    """ updates the tabu list: decrements all values by 1 and remove keys when such values reach 0 """
     for e in self.tabuList.copy():
       if(self.tabuList[e] == 1):
         del self.tabuList[e]
       else:
         self.tabuList[e] = self.tabuList[e] - 1
 
-  """
-  Cleans the tree
-  Ascending cleaning from the parent
-  Descending cleaning from the child
-  @return: one node from the child connected component (or None)
-    as well as the list of edges that have been removed
-  """
   def cleanTree(self, parent, child):
+    """
+    cleans the tree, by launching
+      ascending clean from given parent node
+      descending clean from given child node
+    @returns: one node from the child connected component (or None)
+      as well as the list of edges that have been removed
+    """
 
     asc   = self.ascendingClean(parent, list())
     desc  = self.descendingClean(child, list())
@@ -462,15 +453,13 @@ class MulticastTree(nx.DiGraph):
     return (desc[0], removedEdges)
 
   def removeWeightFor(self, path):
+    """ decrements self's weight by the cumulative weight of the given path """
     for e in path:
       self.weight -= self.NetworkGraph[e[0]][e[1]]['weight']
 
-  """
-  TODO
-  aucune feuille ne soit noire (supprime les noeuds noirs qui n'ont pas d'enfant)
-  retourne un noeud de l'arbre (le premier noeud que l'on ne peut pas supprimer, ou None)
-  """
   def ascendingClean(self, current, removedEdges):
+    """ launches an ascendingClean procedure:
+        @returns: one node from the tree (the first undeleted node, or None) """
     log.debug('clients: %s' % self.C)
     log.debug('current: %s' % current)
     if (current in self.C) or (self.degree(current) >= 2):
@@ -485,12 +474,9 @@ class MulticastTree(nx.DiGraph):
       log.debug('current removed: %s and parent is: %s' % (current, parent))
       return self.ascendingClean(parent, removedEdges)
 
-  """
-  TODO
-  pour que le root (enfant de l'edge) appartienne à C, ou bien qu'il ait un degré supérieur ou égale à 2
-  retourne un noeud de l'arbre (le premier noeud que l'on ne peut pas supprimer, ou None)
-  """
   def descendingClean(self, current, removedEdges):
+    """ launches an descendingClean procedure:
+        @returns: one node from the tree (the first undeleted node, or None) """
     if (current in self.C) or (self.degree(current) >= 2):
       return (current, removedEdges)
     else:
@@ -500,12 +486,10 @@ class MulticastTree(nx.DiGraph):
       removedEdges.append(removedEdge)
       return self.descendingClean(child, removedEdges)
 
-  """
-  Aims at reconnecting the two connected components after edge removal
-  Potentially inverts edge directions
-  returns False when he reconnection path is the same as the removed one
-  """
   def reconnectCC(self, subRoot, removedEdges, temperature, onlyBest=False):
+    """ aims at reconnecting the two connected components after an edge removal
+        potentially inverts edge directions
+        @returns: False when he reconnection path is the same as the previously removed one """
     # select a path (at least one edge) to add (may be the same one)
     newPathInstalled = True
     log.debug('subRoot: %s' % subRoot)
@@ -541,7 +525,11 @@ class MulticastTree(nx.DiGraph):
 
 
   def selectReconnectionPath(self, sourceTreeNodes, descTreeNodes, removedEdges, temperature):
-    # consider all pairs of nodes from the two given sets source/descTreeNodes
+    """ selects reconnection path between the two components 
+        considers pairs of nodes from the two given sets source/descTreeNodes
+        applies the search_strategy parameter 
+        allows to degrade with probability derived from given temperature only if intensify_only parameter is set to False """
+    
     # cost to achieve in order to improve
 
     removedPath = self.edgePathToNodePath(removedEdges)
@@ -563,13 +551,11 @@ class MulticastTree(nx.DiGraph):
     lessDegradingPath     = None
     lessDegradingPathCost = sys.maxint
 
-    # k=1
-
     search_strategy = Setup.get('search_strategy')
 
     for stn in sourceTreeNodesList:
       for dtn in descTreeNodesList:
-        log.debug("reconnection considered : (%s, %s)" % (stn, dtn))
+        log.debug("considered reconnection : (%s, %s)" % (stn, dtn))
 
         sPW = self.NetworkGraph.ShortestPathsLength[stn][dtn][0]
 
@@ -599,7 +585,7 @@ class MulticastTree(nx.DiGraph):
       if cleanedPath != removedPath:
         cPWeight = self.NetworkGraph.getNodePathWeight(cleanedPath)
         if cPWeight < toImprove:
-          degrading = False # because the path is improving, although useless, for lisibility
+          degrading = False # because the path is improving, although useless, for readability
           return (cleanedPath, degrading)
         else: # cPWeight >= toImprove
           degrading = self.evaluateSAProbability(toImprove, cPWeight, temperature)
@@ -610,6 +596,7 @@ class MulticastTree(nx.DiGraph):
 
 
   def nodePathToEdgePath(self, nodePath):
+    """ converts a path expressed as [n1, n2, n3] to the tuple representation [(n1, n2), (n2, n3), (n3, n3)] """
     returnedList = []
     for i in range(len(nodePath) - 1):
       n1 = nodePath[i]
@@ -618,6 +605,7 @@ class MulticastTree(nx.DiGraph):
     return returnedList
 
   def edgePathToNodePath(self, edgePath):
+    """ converts a path expressed as tuple representation [(n1, n2), (n2, n3), (n3, n3)] to a list of nodes representation: [n1, n2, n3] """
     n1, n2    = edgePath[0]
     nodePath  = [n1, n2]
     for e in edgePath[1:]:
@@ -628,6 +616,7 @@ class MulticastTree(nx.DiGraph):
     return nodePath
 
   def addPathToTabu(self, path):
+    """ adds given path to the tabu list with initial ttl value """
     for i in range(len(path) - 1):
       n1  = path[i]
       n2  = path[i+1]
@@ -635,9 +624,11 @@ class MulticastTree(nx.DiGraph):
       self.tabuList[e] = self.ttl+1
 
   def emptyTabu(self):
+    """ empty the tabu list """
     self.tabuList = {}
 
   def reRoot(self, newRoot, oldRoot):
+    """  """
     # when rerooting, some paths may be inverted, and thus, must change in the path priority queue
     # if oldRoot is a black node and is now of degree 2, two paths must be merged into one
 
