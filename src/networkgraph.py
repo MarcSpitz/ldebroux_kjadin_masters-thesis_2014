@@ -310,4 +310,9 @@ class NetworkGraph(nx.Graph):
       i += 1
 
     T.validate()
+    if pim_mode:
+      # the following line is a test, can be disabled
+      log.info("ensuring if the tree follows PIM mode..")
+      T.validatePIMTree()
+
     return T
