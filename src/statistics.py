@@ -9,13 +9,15 @@ class Statistics():
 
   def __init__(self):
 
+    # contains the costs of the tree after each tick in the scenario
     self.tickCosts      = []
+    # contains the number of rounds of local search that could be made for each improvement
     self.improveTry     = []
     #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
     self.stateOfImprove = [] 
+
     edgesBeforeImprove  = None
     weightBeforeImprove = -1
-
     self.currentClient  = None
     self.addingTime     = -1
     self.stateBeforeEvent   = None
@@ -29,12 +31,14 @@ class Statistics():
     self.removalTimes   = dict()
 
   def addToListDict(self, dictionary, index, value):
+    ''' adds value in the list at index in dictionary '''
     if index in dictionary:
       dictionary[index].append(value)
     else:
       dictionary[index] = [value]
 
   def startEvent(self, client, nodes=-1, edges=[], cost=-1, clients=-1):
+    ''' Start of an event, can be of any type '''
     self.clientAddStartTime   = self.getTime()
     self.currentTime          = self.getTime()
     self.currentClient        = client
@@ -63,10 +67,12 @@ class Statistics():
       pass
 
   def startImprove(self, edges, weight):
+    ''' Improvement starting, edges and weight information are cached '''
     self.edgesBeforeImprove = edges
     self.weightBeforeImprove = weight
 
   def endImprove(self, edges, weight):
+    ''' Improvement over, the cached information is used along with the new one to store the changes made by the improvement'''
     self.stateOfImprove.append((self.edgesBeforeImprove, edges, self.weightBeforeImprove, weight))
 
   def nbImproveTry(self, improveTry):
@@ -74,6 +80,7 @@ class Statistics():
 
   def updateCumulatedCost(self, cost):
     self.tickCosts.append(cost)
+
 
   def getTime(self):
     # return clock()*1000
@@ -99,9 +106,9 @@ class Statistics():
     return self.removalTimes
 
   def reset(self):
+    ''' Reset the statitics when another tree is built '''
     self.tickCosts      = []
     self.improveTry     = []
-    #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
     self.stateOfImprove = [] 
     edgesBeforeImprove  = None
     weightBeforeImprove = -1
