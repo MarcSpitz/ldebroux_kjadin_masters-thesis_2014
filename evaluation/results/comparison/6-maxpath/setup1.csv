@@ -1,0 +1,2 @@
+client_ordering,improve_maxtime,improve_period,improve_search_space,intensify_only,k_shortest_paths,max_paths,pim_mode,search_strategy,selection_heuristic,statistics_dump_file,steps,tabu_ttl,temperature_schedule
+ORDERED,25,1,9223372036854775807,False,1,5,False,BEST_IMPROVEMENT,MOST_EXPENSIVE_PATH,,OFF,50,LINEAR

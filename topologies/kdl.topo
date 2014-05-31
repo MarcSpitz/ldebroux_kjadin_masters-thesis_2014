@@ -1,0 +1,8 @@
+[main]
+name = Kdl
+topology            = ../topologies/topologyzoo/Kdl.gml
+weight_attribute    = GEO
+
+root = 0
+
+shortest_paths_file = kdl_sp
