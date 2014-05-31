@@ -172,7 +172,10 @@ class NetworkGraph(nx.Graph):
     return totWeight
 
   def buildMCTree(self, root, events):
-
+    """ Creates the multicast tree based on the given events.
+        Depending on the client_ordering heuristic that is used, the list of event may be changed
+        Regularily checks that the tree is a valid multicast tree for the current clients
+    """
     log.debug('building multicast tree')
     log.debug('set of events: %s' % events)
     
@@ -215,22 +218,6 @@ class NetworkGraph(nx.Graph):
       chosenOrdering = chosenOrderingTuple[:]
       improvePeriod, improveTime = Setup.get('improve_period'), Setup.get('improve_maxtime')
       chosenOrdering = Utils.addImproveSteps(chosenOrdering, improvePeriod, improveTime)
-
-    elif client_ordering == Setup.CLOSEST_SOURCE:
-      raise Exception('not supported function')
-      # Chooses the client that is the closest to the source and adds it.
-      # Will be useful to tests random client arrival versus known client set
-      # ---------------------------------------------------------------------
-      while eventsList:
-        cost = float("inf")
-        for c in eventsList:
-          cTemp = self.ShortestPathsLength[root][c][0]
-          if cTemp < cost:
-            cost = cTemp
-            closestClient = c
-
-        chosenOrdering.append(closestClient)
-        eventsList.remove(closestClient)
     
     elif client_ordering == Setup.RANDOM:
         # first shuffle the list
