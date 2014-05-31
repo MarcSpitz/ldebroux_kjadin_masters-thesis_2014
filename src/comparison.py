@@ -138,6 +138,8 @@ class ComparisonTest(AbstractTest):
       # setupCostList contains percentages
       dataSetCostList.append(setupCostList)
 
+    f.close()
+
     setupResults = []
     for i in range(len(custom_setupDicts)): # go through the columns of the array
       column = []
