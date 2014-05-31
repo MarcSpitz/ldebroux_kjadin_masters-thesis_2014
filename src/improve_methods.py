@@ -27,7 +27,6 @@ class ImproveMethods:
       log.info('improvement iteration %s', i)
       T.improveTreeOnce()
     T.updateTabu()
-    print '---'
     return T
 
   @staticmethod
@@ -45,7 +44,6 @@ class ImproveMethods:
         failedSwapsLeft -= 1
 
     T.updateTabu()
-    print '---'
     return T
 
   @staticmethod

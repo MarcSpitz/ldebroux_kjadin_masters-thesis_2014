@@ -58,7 +58,7 @@ class ImpactTest(AbstractTest):
     timestr = Utils.getTimeString()
     log.info("test started at: %s" % timestr)
 
-    # @todo remove: k = 1 # unused
+    k = 1 # unused
 
     custom_setupDicts = self.setupDicts
     dataSets          = self.dataSets

@@ -22,7 +22,7 @@ class AdditionRemovalTimeTest(AbstractTest):
     timestr = Utils.getTimeString()
     log.info("test started at: %s" % timestr)
     
-    # @todo remove: k = 1 # unused
+    k = 1 # unused
 
     additionTimesList = [] # list of dicts
     removalTimesList  = []

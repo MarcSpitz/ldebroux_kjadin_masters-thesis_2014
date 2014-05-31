@@ -293,7 +293,7 @@ class MulticastTree(nx.DiGraph):
       edgeAttributes = NG[n1][n2]
       # build and add the edge to the tree edges set
       edgeUnique = (n1, n2) if n1<n2 else (n2, n1)
-      log.info('have to add edge: (%s,%s)' % (n1, n2))
+      log.debug('have to add edge: (%s,%s)' % (n1, n2))
       if not edgeUnique in GraphEdges:
         raise Exception("Tree is corrupted")
 
