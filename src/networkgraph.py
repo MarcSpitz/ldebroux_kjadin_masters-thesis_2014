@@ -50,41 +50,18 @@ class NetworkGraph(nx.Graph):
     log.debug('ShortestPathsLength: %s' % self.ShortestPathsLength)
     log.debug('ShortestPathsCount : %s' % self.ShortestPathsCount)
 
-    # deterministically layout nodes
-    # A = nx.to_agraph(self)
-    # self.layout = A.layout()
-
-    # attempts : http://stackoverflow.com/questions/14727820/networkx-style-spring-model-layout-for-directed-graphs-in-graphviz-pygraphviz
-    # self.layout   = nx.graphviz_layout(self)
-    
-    # self.layout   = nx.graphviz_layout(self, prog = 'fdp')
-    # self.layout   = nx.graphviz_layout(self, prog = 'dot')
-    # self.layout   = nx.graphviz_layout(self, prog = 'sfdp')
-    # self.layout = nx.spring_layout(self)
     self.layout = nx.spring_layout(self, k=0.3, iterations=50)
 
-    # scale = 200
-    # print self.layout
-    # self.layout = [(self.layout[lay][0] * scale, self.layout[lay][1] * scale) for lay in self.layout]
-    # print self.layout
-    # for i in self.layout:
-    #   self.layout[i][0] = self.layout[i][0] * scale # x coordinate
-    #   self.layout[i][1] = self.layout[i][0] * scale # y coordinate
-
-  """
-  Returns the filenames corresponding to (in order) sP, sPL and sPC structures
-  @deprecated
-  """
-  def get_filenames(self, base_filename):
-    return ["sP_"+base_filename, "sPL_"+base_filename, "sPC_"+base_filename]
 
   def save_shortest_paths(self, filename):
+    """ Exports the shortest paths by exporting the memory to a file """
     # pack the 3 data structures
     struct = [self.ShortestPaths, self.ShortestPathsLength, self.ShortestPathsCount]
     with file(filename,  'wb') as outfile:
       pickle.dump(struct, outfile)
 
   def load_shortest_paths(self, filename):
+    """ Importing the shortest paths. The file give should be a dump of the memory """
     with file(filename,  'rb') as infile:
       struct  = pickle.load(infile)
 
@@ -95,10 +72,15 @@ class NetworkGraph(nx.Graph):
     self.ShortestPathsCount   = sPC
 
   def add_weight_attribute(self, type = None):
+    """ Adds the weighs to the edges of the network graph based on the weight attribute
+        Can be either GEO, WEIGHT, BANDWIDTH or NONE
+        In the case of GEO, the weight are extrapolated based on the position of the nodes
+        In the case of WEIGHT and BANDWIDTH, the edges in the gml should have the corresponding attribute
+        If set to NONE, all edges have a weight of 1
+    """
     
     NG = self
 
-    # test
     Nodes = NG.nodes(data=True)
     if type == "GEO":
       log.debug("using %s attribute" % type)
@@ -106,7 +88,8 @@ class NetworkGraph(nx.Graph):
       longitude_attribute_str = "Longitude"
       latitude_attribute_str  = "Latitude"
 
-      # @todo: change this default value
+      # default value when the computation of the distance fails
+      # a failure occurs when the coordinates are wrong or not present
       default_distance = 60
       log.info("setting %s as default distance" % default_distance)
 
@@ -125,28 +108,28 @@ class NetworkGraph(nx.Graph):
           log.warning("no location information available for one node")
           log.debug(str(e))
           dist = default_distance
-          
-        # finally:
-        #   return int(dist)
 
         if dist < 1.0:
-          # a distance of 1 is the minimum value
+          # a distance of 1 is the minimum value, the weight of a link in a network must be strictly positive
           dist = 1
 
         log.debug("dist: %s km" % dist)
         return int(dist)
       weights = {e:map_geo(e) for e in NG.edges()}
+
     elif type == "BANDWIDTH":
       # when bandwidth attribute is present
       # edge attribute
       log.debug("using %s attribute" % type)
       raise Exception("TODO: bandwidth derivation")
       pass
+
     elif type == "WEIGHT":
       # edge attribute
       log.debug("using %s attribute" % type)
       attribute_str = "weight"
       weights = {(n1, n2):d[attribute_str] for (n1, n2, d) in NG.edges(data=True)}
+
     else: # "NONE"
       log.debug("no attribute present")
       # when no attribute is present
@@ -158,21 +141,6 @@ class NetworkGraph(nx.Graph):
     nx.set_edge_attributes(NG, 'weight', weights)
 
   def draw(self):
-    # random drawing methods
-    # nx.draw(self)
-    # nx.draw_spring(self)
-    # nx.draw_random(self)
-    # nx.draw_circular(self)
-    # nx.draw_spectral(self)
-    # nx.draw_shell(self)
-    # nx.draw_networkx(self)
-
-    # deterministic methods
-    # nx.draw_graphviz(self)
-
-    # plt.figure(figsize=(8,8))
-
-    # use the pre-defined layout
     nx.draw(self, self.layout)
 
     plt.show()
@@ -184,6 +152,7 @@ class NetworkGraph(nx.Graph):
     nx.write_dot(self, outfile)
 
   def getEdgePathWeight(self, path):
+    """ Compute the weight of a path expressed as [edge1, edge2, ..., edgeN], where edges are couples of nodes """
     totWeight = 0
     for e in path:
       n1, n2 = e
@@ -191,6 +160,7 @@ class NetworkGraph(nx.Graph):
     return totWeight
 
   def getNodePathWeight(self, path, fullWeight = False):
+    """ Compute the weight of a path expressed as a list of nodes: [n1, n2, ..., nN] """
     totWeight = 0
     for i in range(len(path)-1):
       n1 = path[i]
