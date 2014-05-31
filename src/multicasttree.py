@@ -628,7 +628,7 @@ class MulticastTree(nx.DiGraph):
     self.tabuList = {}
 
   def reRoot(self, newRoot, oldRoot):
-    """  """
+    """ launches a reroot procedure from given oldRoot to given newRoot """
     # when rerooting, some paths may be inverted, and thus, must change in the path priority queue
     # if oldRoot is a black node and is now of degree 2, two paths must be merged into one
 
@@ -661,11 +661,9 @@ class MulticastTree(nx.DiGraph):
       n1 = n2
 
 
-  """
-  Rerooting case when a rerooting needs to be done from oldRoot to newRoot
-  Invert all the paths from oldRoot to newRoot
-  """
   def invertPathsFromNewRootToOldRoot(self, newRoot, oldRoot):
+    """ rerooting case when a rerooting needs to be done from oldRoot to newRoot.
+        Invert all the paths from oldRoot to newRoot """
     currentRoot = newRoot
     toInvert    = []
 
@@ -673,28 +671,26 @@ class MulticastTree(nx.DiGraph):
       # parentPath is the path to invert
       if not currentRoot in self.parentPaths:
         # it means that currentRoot has a childPath that leads to the previous currentRoot, 
-        # but is not in a path, that path has to be splited
+        # but is not in a path, that path has to be split
         self.splitPathContainingNewRoot(currentRoot, oldRoot)
-        # raise Exception('parentPaths is corrupted')
+
       parentPathTuple = self.parentPaths[currentRoot]
       toInvert.append(parentPathTuple)
-      # self.invertPath(parentPathTuple)
+
       # update the currentRoot to the last element of the parentPath
       currentRoot = parentPathTuple[1][0]
 
-    # invertion must be done after climbing the tree
+    # inversion must be done after climbing the tree
     # top-down inversion to avoid messing with the parentPaths data structure
     toInvert.reverse()
     for t in toInvert:
       self.invertPath(t)
 
 
-  """
-  Transform the case when newRoot is inside a path into the simpler case when
-  there is a path starting and ending at newRoot
-  newRoot is the node where the split is to be done
-  """
   def splitPathContainingNewRoot(self, newRoot, oldRoot):
+    """ transform the case when newRoot is inside a path into the simpler case when 
+        there is a path starting and ending at newRoot
+        newRoot is the node where the split is to be done """
     borderNodeFound = False
     pathContainingNewRoot = None
     n1 = newRoot
@@ -720,14 +716,13 @@ class MulticastTree(nx.DiGraph):
     self.splitPathAroundNode(newRoot, pathContainingNewRoot)
 
 
-  """
-  TODO: rewrite, when it works, idea: keep only one node f each sub tree in the cleaned path
-  Cleans a path from the edges it contains that already are in the tree
-  (in one direction or the other).
-  Needed to avoid creating loops in the tree upon reconnection
-  @param: path: the path to clean
-  """
   def cleanPath(self, path, sT, dT):
+    """
+    cleans a path from the edges it contains that already are in the tree (in one direction or the other).
+    Needed to avoid creating loops in the tree upon reconnection
+    @param: path: the path to clean
+    @todo: rewrite, when it works, idea: keep only one node f each sub tree in the cleaned path
+    """
     cleanedPath = []
     firstInST = 0
     for i in reversed(range(len(path))):
@@ -745,11 +740,9 @@ class MulticastTree(nx.DiGraph):
     return cleanedPath
 
 
-  """
-  Pops the first valid path found in the pathQueue (which can contain invalid/non-split paths).
-  Pops them in order and returns the first valid path.
-  """
   def popFirstValidPath(self, maxPaths = 3):
+    """ pops the first valid path found in the pathQueue (which can contain invalid/non-split paths).
+        pops them in order and returns the first valid path. """
     returnPathTuple = None
     toRestore       = []
     validPaths      = []
@@ -803,21 +796,18 @@ class MulticastTree(nx.DiGraph):
     else:
       return None
 
-  """
-  pre: the path should be in the right way, that is, the first node 
-        of the path is the one that is part of the tree component containing the root
-      # to be verified
-      The path should not have already been added to the tree
-
-      Must be called whenever a path is added to the tree
-  """
   def addToPathQueue(self, path):
+    """ pre:  the path should be in the right way, that is, the first node 
+              of the path is the one that is part of the tree component containing the root
+        The path should not have already been added to the tree
+        Called whenever a path is added to the tree """
     pathWeight  = self.NetworkGraph.getNodePathWeight(path)
     pathTuple   = (-pathWeight, path)
 
     self.addTupleToPathQueue(pathTuple)
 
   def addTupleToPathQueue(self, pathTuple):
+    """ @todo ??? """
     n1 = pathTuple[1][0]  # first node of the path
     n2 = pathTuple[1][-1] # last node of the path
 
@@ -870,10 +860,8 @@ class MulticastTree(nx.DiGraph):
     for p in toAdd:
       self.addTupleToPathQueue(p)
 
-  """
-  Attempt to merge the paths around the given node
-  """
   def mergePaths(self, node):
+    """ attempts to merge the paths around the given node """
     if (not node in self.C):
       if (node in self.parentPaths) and (node in self.childrenPaths):
         childrenTuples  = self.childrenPaths[node]
@@ -888,11 +876,9 @@ class MulticastTree(nx.DiGraph):
 
           self.replacePaths([childTuple, parentTuple], [newTuple])
 
-  """
-  Splits the path contained in pathTuple in two paths around node
-  The three data structures pathQueue, parentPaths and childrenPaths are updated
-  """
   def splitPathAroundNode(self, node, pathTuple, removeBotPath=False):
+    """ splits the path contained in pathTuple in two paths around node
+        The three data structures pathQueue, parentPaths and childrenPaths are updated """
     weight, path = pathTuple
     if not node in path:
       raise Exception('A path cannot be split around a node if the node is not in the path')
@@ -911,12 +897,10 @@ class MulticastTree(nx.DiGraph):
     else:
       self.replacePaths([pathTuple], [topTuple, botTuple])
 
-  """
-  For the given pathTuple tuple (weight, path), invert all of its edges 
-  (childrenPaths and parentPaths data structures are updated in 
-  subsequent calls to add/removeTupleFrom/ToPathQueue)
-  """
   def invertPath(self, pathTuple):
+    """ for given pathTuple (weight, path), invert all of its edges 
+        (childrenPaths and parentPaths data structures are updated in 
+        subsequent calls to add/removeTupleFrom/ToPathQueue) """
     pWeight, path     = pathTuple
     oldRoot, newRoot  = path[0], path[-1]
     
@@ -929,7 +913,7 @@ class MulticastTree(nx.DiGraph):
 
   def evaluateSAProbability(self, oldWeight, newWeight, temperature):
     """
-    Returns True if we want to replace paths according to the temperature and their weights
+    returns True if we want to replace paths according to the temperature and their weights
     If newWeight is higher than oldWeight (this corresponds to a degradation),
       return True with probability exp( -(newWeight-oldWeight) / temperature)
                   else return False
@@ -958,12 +942,10 @@ class MulticastTree(nx.DiGraph):
       # improving
       return True
 
-  """
-  In a tree, each node has at most one predecessor
-  Redefine networkx predecessors method to reflect this fact
-  @return parent node number or None if given node was the root 
-  """
   def predecessor(self, node):
+    """ In a tree, each node has at most one predecessor
+        Redefine networkx predecessors method to reflect this fact
+        @returns parent node or None if given node was the root """
     pred = self.predecessors(node)
     if pred:
       return pred[0]
@@ -974,8 +956,8 @@ class MulticastTree(nx.DiGraph):
     nx.draw_graphviz(self)
     nx.write_dot(self, outfile)
 
-
   def validate(self):
+    """ validates that self is a valid multicast service with respect to the inner clients set """
     treeNodes = dag.descendants(self, self.root)
     treeNodes.add(self.root)
 
@@ -989,6 +971,7 @@ class MulticastTree(nx.DiGraph):
     assert len(self.nodes()) == len(self.edges()) + 1
 
   def validatePIMTree(self):
+    """ validates that self follows the PIM's shortest path-based way of building multicast trees """
     log.debug("ensurePIMTree")
     
     T = self
