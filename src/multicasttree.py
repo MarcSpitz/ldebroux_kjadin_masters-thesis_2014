@@ -47,7 +47,11 @@ class MulticastTree(nx.DiGraph):
     self.export_step_codegen(Setup.get('steps'))
     self.selectEdge = self.selectEdge_choose(Setup.get('selection_heuristic'))
 
+  def log(self):
+    log.info()
+
   def multicastTreeCopy(self):
+    """ returns a complete copy of the tree """
     MCTcopy = MulticastTree(self.NetworkGraph, self.root)
 
     MCTcopy.graph = copy.deepcopy(self.graph)

@@ -205,10 +205,6 @@ class NetworkGraph(nx.Graph):
 
     log.debug('building multicast tree')
     log.debug('set of events: %s' % events)
-
-    # using internal spanning tree function
-    # just for reference..
-    # T = nx.minimum_spanning_tree(self.G)
     
     # should start with empty tree
     T = MulticastTree(self, root)
