@@ -51,7 +51,7 @@ class Statistics():
       eventProcessingTime = 0.0
     if event == 't':
       self.updateCumulatedCost(cost)
-    elif eventProcessingTime < 50: # todo: horrible garde parce que python compte pas bien le temps 
+    elif eventProcessingTime < 50: # sometimes the evaluation of the time fails to work properly, guard to avoid insane values
       if    event == 'a':
         self.addToListDict(self.additionTimes, nodesBeforeEvent, eventProcessingTime)
       elif  event == 'r':
@@ -76,46 +76,33 @@ class Statistics():
     self.tickCosts.append(cost)
 
   def getTime(self):
-    # return clock()*1000 # todo: that's what we said we used in the thesis
+    # return clock()*1000
     return self.cpu_time()*1000
 
   def cpu_time(self):
     return resource.getrusage(resource.RUSAGE_SELF)[0]
 
-  ''' 
-  TODO: comment
-  '''
+
   def getTickCosts(self):
     return self.tickCosts
 
-  ''' 
-  TODO: comment
-  '''
   def getImproveTry(self):
     return self.improveTry
 
-  ''' 
-  TODO: comment
-  '''
   def getStateOfImprove(self):
     return self.stateOfImprove
 
-  ''' 
-  TODO: comment
-  '''
   def getAdditionTimes(self):
     return self.additionTimes
 
-  ''' 
-  TODO: comment
-  '''
   def getRemovalTimes(self):
     return self.removalTimes
 
   def reset(self):
     self.tickCosts      = []
     self.improveTry     = []
-    self.stateOfImprove = [] #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
+    #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
+    self.stateOfImprove = [] 
     edgesBeforeImprove  = None
     weightBeforeImprove = -1
 
