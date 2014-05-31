@@ -38,7 +38,7 @@ class AdditionRemovalTimeTest(AbstractTest):
 
     # testname            = self.testname
     config_file         = self.config_file
-    shortest_paths_file = self.shortest_paths_file
+    shortest_paths_file = self.shortest_paths_file_name
 
     prependstr = "_".join([config_file, shortest_paths_file])
     filename_add = "%s_addition.txt" % (prependstr)

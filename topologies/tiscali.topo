@@ -1,8 +1,8 @@
 [main]
 name = RocketFuel
-topology            = ../topologies/rocketfuel/tiscali/tiscali.gml
+topology            = ../topologies/tiscali.gml
 weight_attribute    = WEIGHT
 
 root = 0
 
-shortest_paths_file = tiscali_sp
+shortest_paths_file = ../topologies/tiscali_sp

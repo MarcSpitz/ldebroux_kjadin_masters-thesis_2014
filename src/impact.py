@@ -63,7 +63,7 @@ class ImpactTest(AbstractTest):
 
     # testname            = self.testname
     config_file         = self.config_file
-    shortest_paths_file = self.shortest_paths_file
+    shortest_paths_file = self.shortest_paths_file_name
 
     impactDict = {}
     nodesInGraph = len(NGdict[k].nodes())

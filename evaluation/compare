@@ -1,0 +1,15 @@
+#!/bin/bash
+
+CMD="../src/comparison.py"
+TOPO="../topologies/tiscali.topo"
+DATASETS_FOLDER="../evaluation/datasets"
+WD="../evaluation/results/comparison"
+
+TEST="$1"
+
+CFG_FOLDER="$WD/$TEST"
+
+OUTPUT_FOLDER="$WD/out/$TEST"
+mkdir -p $OUTPUT_FOLDER
+
+"$CMD" -c "$CFG_FOLDER"/*.cfg -t "$TOPO" -w "$OUTPUT_FOLDER"/ -d "$DATASETS_FOLDER"/tiscali/**/*.ds

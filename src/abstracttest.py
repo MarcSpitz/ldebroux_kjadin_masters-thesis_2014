@@ -43,7 +43,8 @@ class AbstractTest(object):
     topologyDict = args['topology']
     self.topology            = topologyDict['topology']
     self.weight_attribute    = topologyDict['weight_attribute']
-    self.shortest_paths_file = topologyDict['shortest_paths_file']
+    self.shortest_paths_file      = topologyDict['shortest_paths_file']
+    self.shortest_paths_file_name = os.path.basename(self.shortest_paths_file)
     self.root                = topologyDict['root']
 
     self.colors = {

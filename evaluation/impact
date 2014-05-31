@@ -1,0 +1,22 @@
+#!/bin/bash
+
+CMD="../src/impact.py"
+DATASETS_FOLDER="../evaluation/datasets"
+WD="../evaluation/results/impact"
+
+BEST="impact_best"
+IPF="impact_ip5"
+IPTF="impact_ip25"
+
+OUTPUT_FOLDER="$WD/out"
+mkdir -p $OUTPUT_FOLDER
+
+TOPO="../topologies/tiscali.topo"
+"$CMD" -c "$WD"/"$BEST".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/tiscali/**/*.ds
+"$CMD" -c "$WD"/"$IPF".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/tiscali/**/*.ds
+"$CMD" -c "$WD"/"$IPTF".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/tiscali/**/*.ds
+
+TOPO="../topologies/kdl.topo"
+"$CMD" -c "$WD"/"$BEST".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/kdl/**/*.ds
+"$CMD" -c "$WD"/"$IPF".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/kdl/**/*.ds
+"$CMD" -c "$WD"/"$IPTF".cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/kdl/**/*.ds

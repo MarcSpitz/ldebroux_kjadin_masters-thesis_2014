@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CMD="../src/addition_removal_time.py"
+DATASETS_FOLDER="../evaluation/datasets"
+WD="../evaluation/results/addition_removal"
+
+OUTPUT_FOLDER="$WD/out"
+mkdir -p $OUTPUT_FOLDER
+
+TOPO="../topologies/tiscali.topo"
+"$CMD" -c "$WD"/*.cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/tiscali/**/*.ds
+
+TOPO="../topologies/kdl.topo"
+"$CMD" -c "$WD"/*.cfg -t "$TOPO" -w "$OUTPUT_FOLDER" -d "$DATASETS_FOLDER"/kdl/**/*.ds
