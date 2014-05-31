@@ -5,25 +5,26 @@
 
 from abc import ABCMeta, abstractmethod
 
-import sys, os, random
-import subprocess
+import sys, os
 from utils import Utils
 from setup import Setup
 import logging as log
 import csv
 
 from networkgraph import NetworkGraph
-from pylab import boxplot, show, savefig, figure, plot
 from matplotlib import rc
-import numpy
 
 from setupparser import parseConfigArguments
 
 class AbstractTest(object):
-  """ Abstract test """
+  """ Abstract test
+      This class contains the basic routines for parsing configuration files (.topo, .cfg, .ds)
+      method run() is implemented by the extending class
+  """
   __metaclass__ = ABCMeta
 
   def __init__(self):
+    """ Constructor for a test """
 
     # reset setup once so that the static configuration dictionary is set
     Setup.reset_setup()
@@ -47,6 +48,7 @@ class AbstractTest(object):
     self.shortest_paths_file_name = os.path.basename(self.shortest_paths_file)
     self.root                = topologyDict['root']
 
+    # color definition
     self.colors = {
       'green' :'lightgreen',
       # 'red'   :'#fd522b',
@@ -66,14 +68,10 @@ class AbstractTest(object):
     # reset once more before beginning
     Setup.reset_setup()
     
-
-    ### DATASETS ###
-
-    # TODO maybe proba and lifeTime should be different for every dataSet in order to have a setup comparison that has more coverage
+    ### datasets
     self.dataSets = args['datasets']
 
-
-    ### TEST ###
+    ### test setups
     main, setupsList  = args['testing']
 
     self.testname     = main['name']
@@ -99,7 +97,6 @@ class AbstractTest(object):
 
       # output a csv to be used later on
       filename = "setup%s.csv" % (i)
-      # filename = "%s_%s" % (args['setupsFile'], filename) 
       filename = os.path.join(self.working_directory, filename)
 
       with open(filename, 'w') as fp:
@@ -113,12 +110,12 @@ class AbstractTest(object):
 
   def configGraphFont(self):
     font = {'family' : 'monospace',
-        # 'weight' : 'bold',
-        'size'   : 18}
-
+            'size'   : 18}
     rc('font', **font)
 
   def compute_NGdict(self, topology, weight_attribute, shortest_paths_file, kset):
+    """ returns a dictionary with shortest paths data structure for the given values of k
+        here, only k=1 is supported """
     NGdict = dict()
     for k in kset:
       log.info('building NetworkGraph structure for k = %s' % k)
@@ -136,7 +133,9 @@ class AbstractTest(object):
     log.info('\t>>> \"%s\" progression: %s/%s, %s/%s <<<' % (testname, dsIndex, dsNumber, setupIndex, setupNumber))
 
   def addImproveToDataSet(self, ds): # ds is a list of tuples, some are ('t', _) to represent the ticks
+    """ returns a list of tuples made from the given list ds with periodic improvement steps (in the form of events) added """
     actionTuples = []
+    # fetch improvement period and time from current configuration
     ip, it = Setup.get('improve_period'), Setup.get('improve_maxtime')
     tick = 0
     for action, arg in ds:
@@ -147,9 +146,6 @@ class AbstractTest(object):
       actionTuples.append((action, arg))
 
     lastAction, _ = actionTuples[-1]
-    # print actionTuples
-    # if lastAction != 'i':
-    #   actionTuples.append(('i', it))
     return actionTuples
 
   def writeNewline(self, line, f):

@@ -3,29 +3,26 @@
 # @author: Debroux Léonard  <leonard.debroux@gmail.com>
 # @author: Jadin   Kevin    <contact@kjadin.com>
 
-import sys, os, random
-import subprocess
+import sys, os
 from utils import Utils
 from setup import Setup
 import logging as log
-import csv
 
-from networkgraph import NetworkGraph
-from pylab import boxplot, show, savefig, figure, plot, subplots, gca, tight_layout
+from pylab import savefig, figure, plot, subplots, gca, tight_layout
 from matplotlib.ticker import MaxNLocator
-from matplotlib import cm
-import numpy
 
 from abstracttest import AbstractTest
 
 class AdditionRemovalTimeTest(AbstractTest):
+  """ measures the time needed to process client addition and removal 
+      plots the results on a graph """
 
   def run(self):
 
     timestr = Utils.getTimeString()
     log.info("test started at: %s" % timestr)
     
-    k = 1 # unused
+    # @todo remove: k = 1 # unused
 
     additionTimesList = [] # list of dicts
     removalTimesList  = []
@@ -36,7 +33,6 @@ class AdditionRemovalTimeTest(AbstractTest):
     root              = self.root
     tests             = self.tests
 
-    # testname            = self.testname
     config_file         = self.config_file
     shortest_paths_file = self.shortest_paths_file_name
 
@@ -63,26 +59,19 @@ class AdditionRemovalTimeTest(AbstractTest):
         setupIndex = custom_setupDicts.index(s)
         self.log_progression(dataSetIndex+1, len(dataSets), setupIndex+1, len(custom_setupDicts), self.testname)
         
-        i=0 # should be removed because completly useless
+        # @todo remove: i=0 # should be removed because completly useless
         
         Setup.reset_setup() # start from default
         Setup.configure(s)
         
-        events = self.addImproveToDataSet(dataSet) # improves will be added to dataSet while keeping dataSet intact
-        # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-        # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-        # TODO list needs to be modified so that the improves are added to it
-        # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-        # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+        # improves will be added to dataSet while keeping dataSet intact
+        events = self.addImproveToDataSet(dataSet) 
         if log.getLogger(__name__).isEnabledFor(log.INFO): # logs only printed if asked for
           self.print_logs()
-        indexCostList = [] # cell in the array, costs for one dataset, for one setup.
+
         for idx in range(tests):
           log.debug('test %s' % idx)
           
-          # TODO: test_custom asks for a dataSet that is a list of tuples, may need to change
-          
-          # ticks are already in the actionTuples
           _, _, _, _,additionTimes, removalTimes = Utils.run_setup(NGdict[k], root, events)
 
           self.writeDataHeader(f_add, dataSetIndex, setupIndex, idx)
@@ -90,15 +79,12 @@ class AdditionRemovalTimeTest(AbstractTest):
           
           self.writeDataHeader(f_rem, dataSetIndex, setupIndex, idx)
           writeNewline('%s' % removalTimes, f_rem)
-
-          # dump dictionaries to file
           
           additionTimesList.append(additionTimes)
           removalTimesList.append(removalTimes)
 
     f_add.close()
     f_rem.close()
-
 
     # merge dictionaries
     mergedAdditionTimesDict = dict()
@@ -127,19 +113,12 @@ class AdditionRemovalTimeTest(AbstractTest):
     log.debug("infoAdditionTimes %s" % infoAdditionTimes)
     log.debug("infoRemovalTimes  %s" % infoRemovalTimes)
 
-    # TODO: only take into account time that are large enough (do not consider times that are super low because the node was in the tree already)
-
-
-    import itertools
-    # def get_range(dictionary, begin, end):
-    #   return dict(itertools.islice(dictionary.iteritems(), begin, end))
-
     def get_range(dictionary, begin, end):
       return dict((k, v) for k, v in dictionary.iteritems() if begin <= k < end)
 
     def mean(l):
+      """ returns the mean, 0 if l is empty """
       if not l:
-        # print 'zero'
         return 0
       return sum(l)/float(len(l))
 
@@ -147,9 +126,7 @@ class AdditionRemovalTimeTest(AbstractTest):
       keys = sorted(infoDict.keys())
       xMin = keys[0]
       xMax = keys[-1]+1
-      # print keys
-      # print 'min', xMin
-      # print 'max', xMax
+
       nbSteps = 10
       stepSize = (xMax - xMin)/float(nbSteps)
       nbData = []
@@ -157,50 +134,27 @@ class AdditionRemovalTimeTest(AbstractTest):
       meanData = []
       index = []
       for s in range(nbSteps):
-        # kInStep = [k in keys if k >= xMin+s*stepSize and k < xMin+(s+1)*stepSize]
-        # todo:check limit values, the last key is not taken
+
         data = []
-        # for k in range(xMin+s*stepSize, xMin+(s+1)*stepSize):
-        #   if k in keys:
-        #     for v in infoDict[k]:
+
         rbegin = xMin+s*stepSize
         rend = xMin+(s+1)*stepSize
-        # print 'r.begin', rbegin
-        # print 'r.end', rend
+
         r = get_range(infoDict, rbegin, rend)
-        # print 'r', r
+
         for k, v in r.iteritems():
           for t in v:
-            # print (t)
             if t > 0.1: # to prevent wrong estmation of the time by python
               nbData.append(k)
               data.append(t)
             else:
               nbNul.append(k)
-        # print 'data', data
+
         m = mean(data)
-        # if m == 0:
-        #   print r
         meanData.append(m)
-        # TODO: not well centered
+
         xIndex = (rend + rbegin)/2.0
         index.append(xIndex)
-
-      # print 'nbData', nbData
-      # print 'nbNul', nbNul
-      # print 'meanData', meanData
-      # print 'index', index
-
-      # import numpy as np
-      # from pylab import hist
-      # mu = 100 # mean of distribution
-      # sigma = 15 # standard deviation of distribution
-      # x = mu + sigma * np.random.randn(10000)
-
-      # num_bins = 50
-
-      # hist(x, num_bins, normed=1, facecolor='green', alpha=0.5)
-      # show()
 
       c = self.colors
 
@@ -226,8 +180,6 @@ class AdditionRemovalTimeTest(AbstractTest):
         raise Exception('I have no data :(')
 
       ax1.hist(data, nbSteps, normed=0, histtype='bar', stacked=True, color=colors, label=labels)
-      # ax1.hist([nbData, nbNul], nbSteps, normed=0, histtype='bar', stacked=True, facecolor=cm.summer(0))
-      # ax1.hist(nbData, nbSteps, normed=0, alpha=0.1)
       ax1.set_ylabel('Nb measures')
 
       locations = {
@@ -244,10 +196,7 @@ class AdditionRemovalTimeTest(AbstractTest):
         'center'       : 10
       }
 
-
       lg = ax1.legend(loc=locations['lower right'], prop={'size':16})#,  title='Data', frameon=True)
-
-      # lg.draw_frame(False)
       lg.get_frame().set_edgecolor('white')
 
       ax2 = ax1.twinx()
@@ -255,20 +204,8 @@ class AdditionRemovalTimeTest(AbstractTest):
       ax2.set_ylabel('Time [ms]')
 
       gca().xaxis.set_major_locator(MaxNLocator(prune='lower'))
-
       tight_layout()
 
-      # hist here
-
-      # plotLists = dict(min=list(), mean=list(), max=list())
-      # for key in keys:
-      #   minVal, meanVal, maxVal = infoDict[key]
-      #   plotLists['min'].append(minVal)
-      #   plotLists['mean'].append(meanVal)
-      #   plotLists['max'].append(maxVal)
-      # plot(keys, plotLists['min'], 'b', keys, plotLists['mean'], 'g', keys, plotLists['max'], 'r')
-
-    # print 'add times', infoAdditionTimes
     plotDict(infoAdditionTimes)
     prependstr = "_".join([config_file, shortest_paths_file])
     filename = "%s_addition.eps" % (prependstr)
@@ -279,7 +216,6 @@ class AdditionRemovalTimeTest(AbstractTest):
 
     figure()
 
-    # print 'rem times', infoRemovalTimes
     plotDict(infoRemovalTimes)
     prependstr = "_".join([config_file, shortest_paths_file])
     filename = "%s_removal.eps" % (prependstr)
@@ -288,19 +224,8 @@ class AdditionRemovalTimeTest(AbstractTest):
     log.info("writing to file %s" % filename)
     savefig(filename)
 
-
-    # """
-    # See:
-    # http://matplotlib.org/examples/pylab_examples/boxplot_demo.html
-    # http://stackoverflow.com/questions/16592222/matplotlib-group-boxplots
-    # """
-    # figure()
-    # bplt = boxplot(setupCosts)
-    # savefig("TestStability_%s_%s_%s_%s.png" % (testname, adds, finalNbClients, iSize))
-
 def main(argv):
   artt = AdditionRemovalTimeTest()
-
   artt.run()
 
 if __name__ == "__main__":

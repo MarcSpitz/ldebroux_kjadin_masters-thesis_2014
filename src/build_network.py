@@ -3,8 +3,8 @@
 # @author: Debroux Léonard  <leonard.debroux@gmail.com>
 # @author: Jadin   Kevin    <contact@kjadin.com>
 
-# -m cProfile -o stats -s time  #uncomment for achieving profiling on the full execution
-
+# uncomment for achieving profiling on the full execution
+# -m cProfile -o stats -s time
 import sys
 import argparse
 import networkx as nx
@@ -17,15 +17,19 @@ import random
 import time
 import sys
 
+""" This script launches a typical construction of a multicast tree
+    according to an action sequence """
+
 def configure_parser():
+  """ configures the parser """
   parser = argparse.ArgumentParser()
   parser.add_argument("topology", 
                       type=str,
-                      help="the topology file",
+                      help="the topology file (gml format)",
                       default="")
   parser.add_argument("-sp", "--shortest-paths-file", 
                       type=str,
-                      help="Shortest paths filename. Created dynamically if doesn't exist.",
+                      help="Shortest paths filename. Created dynamically if non existing.",
                       default=None)
   parser.add_argument("-a", "--attribute", 
                       type=str,
@@ -39,7 +43,7 @@ def configure_parser():
   parser.add_argument('-as', '--action-sequence',
                       # nargs='+',
                       type=str,
-                      help="TODO",
+                      help="specifies an action sequence a X, r Y, ar Z1 Z2",
                       default="")
   parser.add_argument("--client-ordering", 
                       type=str,
@@ -89,7 +93,7 @@ def configure_parser():
                       default=Setup.getDefault('k_shortest_paths'))
   parser.add_argument('-p', '--max-paths',
                       type=int,
-                      help="maximum number of paths to select for removal in each improve step",
+                      help="maximum number of paths to select for removal in each improvement step",
                       default=Setup.getDefault('max_paths'))
   parser.add_argument("--steps", 
                       type=str,
@@ -128,8 +132,6 @@ def main(argv):
     intensify_only       = args.intensify_only,
     pim_mode             = args.pim_mode,
     search_strategy      = args.search_strategy,
-    # TODO remove
-    # improve_swaps        = args.improve_swaps,
     improve_period       = args.improve_period,
     improve_maxtime      = args.improve_maxtime,
     improve_search_space = sys.maxint if args.reconnection_search_space_breadth == 0 else args.reconnection_search_space_breadth,
@@ -142,11 +144,6 @@ def main(argv):
   log.info("setupDict: %s" % setupDict)
 
   """ check arguments validity """
-  # check if K <= MAX_PATHS
-  # K from ksp st: K<maxPaths
-  if not setupDict['k_shortest_paths'] <= setupDict['max_paths']:
-    log.warning("number of shortest paths to compute (K_SHORTEST_PATHS) should be lower than the maximum number of paths considered (MAX_PATHS) to avoid unnecessary computations")
-    # raise Exception("number of shortest paths to compute (K_SHORTEST_PATHS) should be lower than the maximum number of paths considered (MAX_PATHS) to avoid unnecessary computations")
 
   if not shortest_paths_file:
     parser.error("missing SHORTEST_PATHS_FILE argument")
@@ -167,10 +164,6 @@ def main(argv):
                       shortest_paths_file
                     )
 
-  # NG.save_shortest_paths("dump.pkl")
-  # NG.load_shortest_paths("dump.pkl")
-
-  # events = Utils.fill_client_list(clients, NG)
   events = Utils.generateActionTuples(action_sequence, set(NG.nodes()))
 
   events = Utils.addTicks(events)

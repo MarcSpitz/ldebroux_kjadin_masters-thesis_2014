@@ -3,41 +3,32 @@
 # @author: Debroux Léonard  <leonard.debroux@gmail.com>
 # @author: Jadin   Kevin    <contact@kjadin.com>
 
-import sys, os, random
-import subprocess
+import sys, os
 from utils import Utils
 from setup import Setup
 import logging as log
 import csv
 
-from networkgraph import NetworkGraph
-from pylab import boxplot, show, savefig, figure, plot, gca, tight_layout, xticks
-from matplotlib.ticker import MaxNLocator
-import numpy, math
+from pylab import boxplot, show, savefig, figure, tight_layout
 from matplotlib import gridspec
 from matplotlib import rc
 
 
 def configGraphFont():
   font = {'family' : 'monospace',
-      # 'weight' : 'bold',
-      'size'   : 18}
-
+          'size'   : 18}
   rc('font', **font)
 
 configGraphFont()
 
-
 impactDict = {
   0:[0,0,0,0],
-  # 2:[3.9],
   2.5:[4.2],
   2.8:[4.8],
   5:[6.8,7,7.2],
   5.2:[6,7,7.7],
   5.5:[7.1,6.2]
 }
-
 
 keys = sorted(impactDict.keys())
 
@@ -97,24 +88,20 @@ fig = figure()
 gs = gridspec.GridSpec(1, 2, width_ratios=[11, 1]) 
 ax1 = fig.add_subplot(gs[0])
 
-
 ax1.hist(measures, bins, color='lightgreen')
-
 ax1.set_xlabel('Tree improvement [%]')
 ax1.set_ylabel('Nb measures')
-
 ax1.yaxis.set_label_position("right")
 
 ax2 = ax1.twinx()
 ax1.yaxis.tick_right()
-ax2.yaxis.tick_left() 
-
 ax1.set_xlim(left=bins[0])
+
+ax2.yaxis.tick_left() 
 
 bp = ax2.boxplot(impacts, positions=locations, widths=bucketWidth/2.5, patch_artist=True)
 ax2.set_ylabel('Impacted nodes [%]')
 ax2.yaxis.set_label_position("left")
-# ax2.set_autoscalex_on(False)
 
 c = {
       'green' :'lightgreen',
@@ -130,26 +117,23 @@ c = {
     }
 
 for box in bp['boxes']:
-  # change outline color
+  # change outline
   box.set( linewidth=0)
-  # box.set( color='#000000', linewidth=3)
   # # change fill color
   box.set( facecolor = c['orange'] )
 
-## change color and linewidth of the whiskers
+# change color and linewidth of the whiskers
 for whisker in bp['whiskers']:
     whisker.set(color=c['gray'], linewidth=2)
 
-## change color and linewidth of the caps
+# change color and linewidth of the caps
 for cap in bp['caps']:
     cap.set(color=c['black'], linewidth=2)
 
-## change color and linewidth of the medians
+# change color and linewidth of the medians
 for median in bp['medians']:
     median.set(color=c['black'], linewidth=5)
 
-
-# xticks(numpy.arange(numpy.floor(bins[0]), numpy.ceil(bins[-1]) ))
 for label in ax1.xaxis.get_ticklabels():
   label.set_rotation(60)
 
@@ -181,20 +165,9 @@ ax3.spines['bottom'].set_visible(False)
 ax3.xaxis.set_ticks_position('bottom')
 ax3.yaxis.set_ticks_position('left')
 
-tight_layout()
-
-filename = "../thesis/images/impact_example.eps"
-
+filename = "impact_example.eps"
 log.info("writing to file %s" % filename)
+
+tight_layout()
 savefig(filename)
 show()
-
-
-# """
-# See:
-# http://matplotlib.org/examples/pylab_examples/boxplot_demo.html
-# http://stackoverflow.com/questions/16592222/matplotlib-group-boxplots
-# """
-# figure()
-# bplt = boxplot(setupCosts)
-# savefig("TestStability_%s_%s_%s_%s.png" % (testname, adds, finalNbClients, iSize))

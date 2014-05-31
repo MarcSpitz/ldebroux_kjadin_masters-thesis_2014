@@ -11,7 +11,8 @@ class Statistics():
 
     self.tickCosts      = []
     self.improveTry     = []
-    self.stateOfImprove = [] #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
+    #should contain tuples : (edgesBeforeImprove, edgesAfterImprove, weightBeforeImprove, weightAfterImprove)
+    self.stateOfImprove = [] 
     edgesBeforeImprove  = None
     weightBeforeImprove = -1
 
