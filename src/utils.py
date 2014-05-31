@@ -360,10 +360,6 @@ class Utils:
     print 'clients', len(nodes)-len(nonClients)
     return {key: eventDict[key] for key in eventDict.keys() if key < ticks}
 
-    # print eventDict
-    
-    # return eventDict
-
   @staticmethod
   def getTimeString():
     return datetime.datetime.today().strftime('%Y%m%d-%H%M%S')

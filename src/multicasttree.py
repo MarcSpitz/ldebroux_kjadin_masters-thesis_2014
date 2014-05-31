@@ -210,6 +210,7 @@ class MulticastTree(nx.DiGraph):
     return cleanedClosestPath
 
   def removeClient(self, c):
+    """ removes given client c from the clients set of self """
     if c == self.root:
       log.error('root cannot be removed from the client set')
     elif c in self.C:
@@ -273,18 +274,16 @@ class MulticastTree(nx.DiGraph):
         log.debug("client %s of deg >=3 to remove", c)
     else:
       log.error("%s is not in the clients set", c)
-
-
-  """
-  Add edges with attributes fetched from the NetworkGraph
-  @param: path: a path is an iterable of 2D tuples [(n1, n2), (n3, n4), ..]
-  @raise: Exception if the edge is non-existant in the NetworkGraph
-  """
+  
   def add_edges(self, path):
+    """
+    add edges with attributes fetched from the NetworkGraph
+    @param: path: a path is a list of nodes [n1, n2, n3, n4, ..]
+    @raise: Exception if the edge is non-existent in the NetworkGraph
+    """
     NG = self.NetworkGraph
     GraphEdges = NG.edges()
-    if log.getLogger(__name__).isEnabledFor(log.DEBUG): # shortcut if possible
-      log.debug('GraphEdges: %s' % GraphEdges)
+    log.debug('GraphEdges: %s' % GraphEdges)
 
     for i in range(len(path) - 1):
       n1 = path[i]
@@ -302,22 +301,22 @@ class MulticastTree(nx.DiGraph):
 
 
   def clients(self):
+    """ returns the clients set """
     return self.C
 
-
-  """
-  Improves the tree
-
-  # procedure: 3 étapes pour improve
-  # 1) enlever une edge (retourner l'edge qu'on enlève)
-  # 2) nettoyer l'arbre cleanTree sur les deux noeuds qui étaient reliés par cette edge
-  #     -> nettoyer les subtrees tq pour le subtree du haut, aucune feuille ne soit noire (supprime les noeuds noirs qui n'ont pas d'enfant)
-  #                                                 du bas, pour que le root (enfant de l'edge) appartienne à C, ou bien qu'il ait un degré supérieur ou égale à 2
-  #     -> 1 méthode par cas qui s'appelle récursivement après une supression
-  # 3) ajouter un nouveau chemin -> O(n^2) chercher le chemin le plus court pour lier les 2 arbres
-  # 3.5) inverser les edges (à faire dans la recherche du nouveau chemin, à l'étape 3)
-  """
   def improveTreeOnce(self, nb, temperature):
+    """
+    performs one round of improvement on the tree
+
+    # procedure: 3 étapes pour improve
+    # 1) enlever une edge (retourner l'edge qu'on enlève)
+    # 2) nettoyer l'arbre cleanTree sur les deux noeuds qui étaient reliés par cette edge
+    #     -> nettoyer les subtrees tq pour le subtree du haut, aucune feuille ne soit noire (supprime les noeuds noirs qui n'ont pas d'enfant)
+    #                                                 du bas, pour que le root (enfant de l'edge) appartienne à C, ou bien qu'il ait un degré supérieur ou égale à 2
+    #     -> 1 méthode par cas qui s'appelle récursivement après une supression
+    # 3) ajouter un nouveau chemin -> O(n^2) chercher le chemin le plus court pour lier les 2 arbres
+    # 3.5) inverser les edges (à faire dans la recherche du nouveau chemin, à l'étape 3)
+    """
     folder = "images/"
 
     if self.improvements < 10:
