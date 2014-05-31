@@ -227,7 +227,7 @@ class NetworkGraph(nx.Graph):
     else: # add clients in the given order
         chosenOrdering = eventsList
 
-    i = 1
+    # @todo remove: i = 1
 
     for (action, arg) in chosenOrdering:
       discardTime = False # flag for reseting the event processing time when a node was already in the tree or hasn't been removed.
@@ -257,6 +257,7 @@ class NetworkGraph(nx.Graph):
 
       # Improvement events are treated
       if action == 'i':
+        # if pim mode is enabled or no time is dedicated to improving, the event is ignored
         if (not pim_mode) and arg > 0:
           Utils.STATISTICS.startImprove(T.edges(), T.weight)
           T = ImproveMethods.improveTree(T, arg)
@@ -266,7 +267,7 @@ class NetworkGraph(nx.Graph):
         else:
           log.debug("action (%s, %s) discarded because of PIM mode" % (action, arg))
 
-      i += 1
+      # @todo remove: i += 1
 
     T.validate()
     if pim_mode:
