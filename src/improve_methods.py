@@ -58,7 +58,6 @@ class ImproveMethods:
     nbImproveTry = 0
     T.emptyTabu()
     temperature = Setup.TEMPERATURE
-    treeBefore = T.multicastTreeCopy()
 
     while elapsedTime < maxTime:
       nbImproveTry += 1
@@ -69,6 +68,7 @@ class ImproveMethods:
       T.updateTabu()
 
       if T.weight < bestCost:
+        # keep the best tree seen so far
         bestTree = T.multicastTreeCopy()
         bestCost = T.weight
 

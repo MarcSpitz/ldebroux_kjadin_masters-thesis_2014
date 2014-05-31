@@ -33,14 +33,11 @@ class Utils:
   def run_setup(NG, root, events):
     """ runs the setup. returns a tuple : (T, avgCost).
     T is the final tree computed """
-    # print 'customs_setup'
-    # print events
+
     T = NG.buildMCTree(root, events)
-    # print T.weight
-    # cust = '-'.join(map(str, s))
-    # filename  = 'NG_'+str(k)+'_cList_'+str(len(clientlist))+'_'+str(nb)+'_custom_'+str(testNumber)
+
     tickCosts = T.weight  # if no tick among the events, avgCost becomes the tree weight,
-                        #just as if a fictious tick event was added the the events sequence
+                          # just as if a fictious tick event was added the the events sequence
     try:
       tickCosts = Utils.STATISTICS.getTickCosts()
       improveTry = Utils.STATISTICS.getImproveTry()
