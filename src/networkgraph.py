@@ -194,7 +194,6 @@ class NetworkGraph(nx.Graph):
     pim_mode = Setup.get('pim_mode')
 
     if client_ordering == Setup.CLOSEST_TREE:
-      # TODO: this function is not in use anymore
       # Chooses the client that is the closest to the tree and adds it.
       # Will be useful to tests random client arrival versus known client set
       # ---------------------------------------------------------------------
@@ -233,6 +232,8 @@ class NetworkGraph(nx.Graph):
     for (action, arg) in chosenOrdering:
       discardTime = False # flag for reseting the event processing time when a node was already in the tree or hasn't been removed.
       Utils.STATISTICS.startEvent(arg, T.number_of_nodes(), T.edges(), T.weight, len(T.C))
+
+      # The addition and removal are treated first
       if action == 'a':
         log.debug('tree nodes before adding the client: "%s"' % T.nodes())
         log.debug('tree edges before adding the client: "%s"' % T.edges(data=True))
@@ -246,7 +247,7 @@ class NetworkGraph(nx.Graph):
           discardTime = True
         T.validate()      
       elif action == 't':
-        pass # treater later
+        pass # nothing to do upon a tick event
       elif action == 'i':
         pass # treated later
       else:
@@ -254,6 +255,7 @@ class NetworkGraph(nx.Graph):
 
       Utils.STATISTICS.endEvent(action, arg, T.number_of_nodes(), T.edges(), T.weight, len(T.C), discardTime)
 
+      # Improvement events are treated
       if action == 'i':
         if (not pim_mode) and arg > 0:
           Utils.STATISTICS.startImprove(T.edges(), T.weight)

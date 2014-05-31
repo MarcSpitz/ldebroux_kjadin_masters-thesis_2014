@@ -20,7 +20,6 @@ class Setup:
   ORDERED        = "ORDERED"
   RANDOM         = "RANDOM"
   CLOSEST_TREE   = "CLOSEST_TREE"
-  CLOSEST_SOURCE = "CLOSEST_SOURCE"
 
   FIRST_IMPROVEMENT = "FIRST_IMPROVEMENT"
   BEST_IMPROVEMENT  = "BEST_IMPROVEMENT"
@@ -47,8 +46,7 @@ class Setup:
                                           default=  ORDERED, 
                                           choices= [ORDERED,
                                                     RANDOM,
-                                                    CLOSEST_TREE,
-                                                    CLOSEST_SOURCE]
+                                                    CLOSEST_TREE]
                                         ),
                 tabu_ttl              = dict(
                                           default=  50
@@ -157,33 +155,3 @@ class Setup:
       return typ(value)
     except ValueError:
       pass
-
-
-  # @staticmethod
-  #   # client-ordering,heuristic,search-strategy,temperature_schedule,intensify,k,ttl,ip,it,rssb,p
-  # def setup_computation(s, k):
-  #   ( cl_order,
-  #     edge_heur,
-  #     search_strategy, 
-  #     temperature_schedule, 
-  #     intensify,
-  #     ttl, 
-  #     ip, 
-  #     it,
-  #     rssb,
-  #     p ) = s
-
-  #   Utils.ARG_ORDERING_CLIENTS      = cl_order
-  #   Utils.ARG_SELECTEDGE_HEURISTIC  = edge_heur
-  #   Utils.SEARCH_STRATEGY           = search_strategy
-  #   Utils.TEMPERATURE_SCHEDULE      = temperature_schedule
-  #   Utils.INTENSIFY                 = intensify
-  #   Utils.TABU_TTL                  = ttl
-  #   Utils.IMPROVETREE_PERIOD        = ip
-  #   Utils.IMPROVETREE_MAXTIME       = it
-  #   if rssb == 0:
-  #     Utils.IMPROVETREE_SEARCH_SPACE = sys.maxint
-  #   else:
-  #     Utils.IMPROVETREE_SEARCH_SPACE  = rssb
-  #   Utils.K_SHORTEST_PATHS          = k
-  #   Utils.MAX_PATHS                 = p
