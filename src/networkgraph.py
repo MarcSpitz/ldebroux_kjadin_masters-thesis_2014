@@ -142,7 +142,6 @@ class NetworkGraph(nx.Graph):
 
   def draw(self):
     nx.draw(self, self.layout)
-
     plt.show()
     # clean plot
     plt.clf()
@@ -227,8 +226,6 @@ class NetworkGraph(nx.Graph):
     else: # add clients in the given order
         chosenOrdering = eventsList
 
-    # @todo remove: i = 1
-
     for (action, arg) in chosenOrdering:
       discardTime = False # flag for reseting the event processing time when a node was already in the tree or hasn't been removed.
       Utils.STATISTICS.startEvent(arg, T.number_of_nodes(), T.edges(), T.weight, len(T.C))
@@ -266,8 +263,6 @@ class NetworkGraph(nx.Graph):
           Utils.STATISTICS.endImprove(T.edges(), T.weight)
         else:
           log.debug("action (%s, %s) discarded because of PIM mode" % (action, arg))
-
-      # @todo remove: i += 1
 
     T.validate()
     if pim_mode:

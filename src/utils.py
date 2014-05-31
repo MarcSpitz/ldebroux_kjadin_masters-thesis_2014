@@ -187,9 +187,6 @@ class Utils:
     t = ('i', it)
     idx = -1
     while idx < len(result) - 1:
-      # print result
-      # print idx
-      # print len(result)
       idx = idx + ip + 1
       result.insert(idx, t)
 
@@ -203,7 +200,6 @@ class Utils:
   """
   @staticmethod
   def removeFromPriorityQueue(pq, elem):
-    # print 'elem', elem
     if not elem == pq.queue[0]:
       pq.queue.remove(elem)
     else:
@@ -254,7 +250,7 @@ class Utils:
 
   @staticmethod
   def gen_client_list(adds, removals, nodes, clients):
-    # @todo: add the capability to have a root different than 0
+    # when using this function, the root is always 0
     # wether it is done in the specs or in the code
     a = adds
     r = removals
@@ -326,11 +322,8 @@ class Utils:
     mu = math.log((mean**2) / math.sqrt(var + mean**2))
     sig = math.sqrt(math.log(1 + (var / float(mean**2))))
 
-    # print 'mu', mu
-    # print 'sig', sig
-
     eventDict = {} # given as an argument
-    # clients = []
+
     nonClients = nodes[:]
 
     if not root in nonClients:
@@ -352,7 +345,6 @@ class Utils:
           eventDict[i].append(('a', nc))
           nonClients.remove(nc)
           timeToLive = int(round(random.lognormvariate(mu, sig)))
-          # print timeToLive
           createOrAppend(eventDict, i + timeToLive, ('r', nc))
         else:
           pass
