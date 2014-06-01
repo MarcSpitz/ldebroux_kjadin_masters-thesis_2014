@@ -172,6 +172,9 @@ def get_shortest_paths(G, K):
 
 
 def testing(argv):
+  import logging as log
+  log.basicConfig(format="%(levelname)s: %(message)s", level=log.INFO)
+  log.info('verbosity level set to INFO')
   # full mesh graph
   G = nx.complete_graph(4)
   # rewrite weights
