@@ -8,6 +8,8 @@ import configparser
 from setup import Setup
 from datasets import readDataset
 import argparse
+import logging as log
+from utils import Utils
 
 def getValueForKey(dictionary, key):
   if not key in dictionary:
@@ -129,12 +131,13 @@ def parseConfigArguments(argv):
     if not os.path.isfile(dsFile):
       parser.error("%s file does not exist" % dsFile)
 
+  Utils.configure_logger(options.verbosity)
+
   args    = dict( topology    = readTopologyConfig(topologyFile),
                   testing     = readSetupsConfig(setupsFile),
                   setupsFile  = setupsFile,
                   datasets    = readDatasets(datasetFiles),
                   directory   = options.directory,
-                  verbosity   = options.verbosity
                   )
   log.debug("args: %s" % args)
   return args

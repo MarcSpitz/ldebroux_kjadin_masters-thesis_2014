@@ -31,9 +31,6 @@ class AbstractTest(object):
 
     args = parseConfigArguments(sys.argv) 
 
-    verbosity = args['verbosity']
-    Utils.configure_logger(verbosity)
-
     log.debug("args: %s" % args)
 
     self.config_file = os.path.basename(args['setupsFile'])
