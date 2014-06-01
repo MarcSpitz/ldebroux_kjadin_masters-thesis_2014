@@ -5,47 +5,10 @@
 
 import networkx as nx
 
-# reference: http://en.wikipedia.org/wiki/Yen%27s_algorithm 
-# pseudocode
-
-# function YenKSP(Graph, source, sink, K):
-#    // Determine the shortest path from the source to the sink.
-#    A[0] = Dijkstra(Graph, source, sink);
-#    // Initialize the heap to store the potential kth shortest path.
-#    B = [];
-   
-#    for k from 1 to K:
-#        // The spur node ranges from the first node to the next to last node in the shortest path.
-#        for i from 0 to size(A[k − 1]) − 1:
-           
-#            // Spur node is retrieved from the previous k-shortest path, k − 1.
-#            spurNode = A[k-1].node(i);
-#            // The sequence of nodes from the source to the spur node of the previous k-shortest path.
-#            rootPath = A[k-1].nodes(0, i);
-           
-#            for each path p in A:
-#                if rootPath == p.nodes(0, i):
-#                    // Remove the links that are part of the previous shortest paths which share the same root path.
-#                    remove p.edge(i, i + 1) from Graph;
-           
-#            // Calculate the spur path from the spur node to the sink.
-#            spurPath = Dijkstra(Graph, spurNode, sink);
-           
-#            // Entire path is made up of the root path and spur path.
-#            totalPath = rootPath + spurPath;
-#            // Add the potential k-shortest path to the heap.
-#            B.append(totalPath);
-           
-#            // Add back the edges that were removed from the graph.
-#            restore edges to Graph;
-                   
-#        // Sort the potential k-shortest paths by cost.
-#        B.sort();
-#        // Add the lowest cost path becomes the k-shortest path.
-#        A[k] = B[0];
-#        B.pop();
-   
-#    return A;
+"""
+J.Y. Yen. Finding the k shortest loopless paths in a network. management
+Science, pages 712–716, 1971
+"""
 
 def k_shortest_path(G, src, dst, K = 1):
   if K < 1:
