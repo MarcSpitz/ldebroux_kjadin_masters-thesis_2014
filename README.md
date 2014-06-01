@@ -1,4 +1,7 @@
 # Local search for Multicast in Software-Defined Networks #
+Thesis submitted for the Master's Degree in Computer Science and Engineering
+Université Catholique de Louvain
+École Polytechnique de Louvain
 
 ## Authors ##
 *   Debroux Léonard <leonard.debroux@gmail.com>
