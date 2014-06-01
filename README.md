@@ -50,7 +50,7 @@ Files
 evaluation/
 -----------
 *   datasets/
-    *   **/**/*.ds : datasets that were used for the experiments
+    *   **/*.ds : datasets that were used for the experiments
 *   results/
     *   **/*.cfg : configuration files for the experiments
     *   **/*.txt : raw data from the tests
