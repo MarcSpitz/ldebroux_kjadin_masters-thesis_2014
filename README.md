@@ -1,8 +1,8 @@
 # Local search for Multicast in Software-Defined Networks #
 
 ## Authors ##
-*   Debroux Léonard -- leonard.debroux@gmail.com
-*   Jadin Kevin -- contact@kjadin.com
+*   Debroux Léonard <leonard.debroux@gmail.com>
+*   Jadin Kevin <contact@kjadin.com>
 
 ## Abstract ##
 Software-defined networking (SDN) provides additional knowledge compared to classical networks. 
