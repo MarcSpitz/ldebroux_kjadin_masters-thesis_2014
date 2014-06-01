@@ -68,7 +68,7 @@ Source code and testing scripts
 
 ### topologies/
 *   *.gml : gml representation of the topologies
-*   *.sp : shortest paths between all nodes in the graph
+*   *.sp : shortest paths (generated automatically upon an execution)
 *   *.topo: configuration files linking a topology to its .gml and .sp
 
 
