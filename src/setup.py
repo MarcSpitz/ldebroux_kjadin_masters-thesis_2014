@@ -62,10 +62,6 @@ class Setup:
                                           choices= [FIRST_IMPROVEMENT,
                                                     BEST_IMPROVEMENT]
                                         ),
-                # not used anymore?
-                # 'improve_swaps':    {
-                #                           default:  1
-                #                         },
                 improve_period        = dict(
                                           default=  1
                                         ),
@@ -125,18 +121,18 @@ class Setup:
   @staticmethod
   def merge(setup1, setup2):
     """ keys present in both setup1 and setup2 take value from setup2
-        doesn't check if keys are valid """
+        doesn't check if keys are valid 
+    """
     return dict(setup1.items() + setup2.items())
 
   @staticmethod
   def configure(d):
-    """ merges the given setup dictionary d with the current setup """
+    """ merges the given setup dictionary d with the current setup 
+    """
     for k, v in d.iteritems():
       if not k in Setup.PARAMETERS_DEFINITION:
         raise Exception('%s unrecognised parameter' % k)
       Setup.PARAMETERS[k] = v
-
-    # print Setup.PARAMETERS
 
   @staticmethod
   def reset_setup():
