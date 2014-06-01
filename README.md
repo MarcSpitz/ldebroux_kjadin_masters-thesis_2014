@@ -1,10 +1,12 @@
 # Local search for Multicast in Software-Defined Networks #
+
 Thesis submitted for the Master's Degree in Computer Science and Engineering
 
-<http://thesis.kjadin.com>
+Repository location: <http://thesis.kjadin.com>
 
-Université Catholique de Louvain
-École Polytechnique de Louvain
+Université Catholique de Louvain: <http://uclouvain.be>
+
+École Polytechnique de Louvain: <http://uclouvain.be/epl>
 
 ## Authors ##
 *   Debroux Léonard <leonard.debroux@gmail.com>
