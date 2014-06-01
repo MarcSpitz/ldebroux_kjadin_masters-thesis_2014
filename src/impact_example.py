@@ -14,6 +14,8 @@ from matplotlib import gridspec
 from matplotlib import rc
 
 
+""" Similar to impact.py, the data to plot are in impactDict """
+
 def configGraphFont():
   font = {'family' : 'monospace',
           'size'   : 18}

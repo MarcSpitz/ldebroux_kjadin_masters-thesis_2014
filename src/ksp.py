@@ -136,6 +136,8 @@ def get_shortest_paths(G, K):
   nodes   = G.nodes()
   length  = len(nodes)
 
+  # the loop is such that paths are not computed in both directions
+  # this cannot be done if the edges of the graph are directed
   for i in range(length):
     n1 = nodes[i]
     shortestPath[n1]        = dict()

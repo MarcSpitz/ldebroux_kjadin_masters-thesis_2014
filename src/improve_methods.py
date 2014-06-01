@@ -23,6 +23,7 @@ class ImproveMethods:
 
   @staticmethod
   def improveNSwaps(T, nb=1):
+    """ The number of local search rounds are arbitrary """
     for i in range(nb):
       log.info('improvement iteration %s', i)
       T.improveTreeOnce()
@@ -31,6 +32,10 @@ class ImproveMethods:
 
   @staticmethod
   def improveTreeAllowedFailures(T, failures=0):
+    """ The search will make local search improves as long are they improve
+        There is a counter of unsuccessful improve rounds,
+        When this counter reaches the argument failures, the local search stops
+    """
     if False:
       swapping = False
     else:
@@ -48,6 +53,10 @@ class ImproveMethods:
 
   @staticmethod
   def improveSA(T, maxTime):
+    """ Simulated annealing for some time
+        The temperature may be re-evaluated based on the chosen temperature_schedule
+        The probability to degrade is evaluate in multicasttree
+    """
     t = clock()
     currentTime = clock()
     elapsedTime = (currentTime - t)*1000

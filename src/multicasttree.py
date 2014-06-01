@@ -94,21 +94,6 @@ class MulticastTree(nx.DiGraph):
     inner.__name__ = fname
     setattr(self.__class__, inner.__name__, inner)
 
-  def selectEdge_choose(self, heuristic):
-    """ returns the right selectEdge heuristic according to given argument """
-    if(heuristic == Setup.MOST_EXPENSIVE):
-      return self.selectEdge_mostExpensive
-    elif(heuristic == Setup.MOST_EXPENSIVE_PATH):
-      if(Setup.get('improve_maxtime') > 0):
-        self.usePathQueue = True
-      return self.selectEdge_mostExpensivePath
-    elif(heuristic == Setup.AVERAGED_MOST_EXPENSIVE_PATH):
-      if(Setup.get('improve_maxtime') > 0):
-        self.usePathQueue = True
-      return self.selectEdge_averagedMostExpensivePath
-    else: # use random selection heuristic
-      return self.selectEdge_random
-
   def export_file(self, outfile):
     """
     @param outfile : string for filename with supported extension {pdf, png}
@@ -127,7 +112,6 @@ class MulticastTree(nx.DiGraph):
     # clean plot
     plt.clf()
 
-  
   def draw(self):
     """ draw the tree on top of the graph """
     # draw the graph except the current tree
@@ -154,8 +138,88 @@ class MulticastTree(nx.DiGraph):
     nx_pylab.draw_networkx_edges(self, self.NetworkGraph.layout, width=2.0, arrow=True, edge_color='red')
     nx.draw_networkx_edge_labels(self, self.NetworkGraph.layout, edge_labels=edgeLabels, label_pos=0.5, font_color='grey')
 
-  def addClient(self, c):
+  def export(self, outfile):
+    nx.draw_graphviz(self)
+    nx.write_dot(self, outfile)
 
+  def selectEdge_choose(self, heuristic):
+    """ returns the right selectEdge heuristic according to given argument """
+    if(heuristic == Setup.MOST_EXPENSIVE):
+      return self.selectEdge_mostExpensive
+    elif(heuristic == Setup.MOST_EXPENSIVE_PATH):
+      if(Setup.get('improve_maxtime') > 0):
+        self.usePathQueue = True
+      return self.selectEdge_mostExpensivePath
+    elif(heuristic == Setup.AVERAGED_MOST_EXPENSIVE_PATH):
+      if(Setup.get('improve_maxtime') > 0):
+        self.usePathQueue = True
+      return self.selectEdge_averagedMostExpensivePath
+    else: # use random selection heuristic
+      return self.selectEdge_random
+
+  def add_edges(self, path):
+    """
+    add edges with attributes fetched from the NetworkGraph
+    @param: path: a path is a list of nodes [n1, n2, n3, n4, ..]
+    @raise: Exception if the edge is non-existent in the NetworkGraph
+    """
+    NG = self.NetworkGraph
+    GraphEdges = NG.edges()
+    log.debug('GraphEdges: %s' % GraphEdges)
+
+    for i in range(len(path) - 1):
+      n1 = path[i]
+      n2 = path[i+1]
+
+      edgeAttributes = NG[n1][n2]
+      # build and add the edge to the tree edges set
+      edgeUnique = (n1, n2) if n1<n2 else (n2, n1)
+      log.debug('have to add edge: (%s,%s)' % (n1, n2))
+      if not edgeUnique in GraphEdges:
+        raise Exception("tree is corrupted")
+
+      self.add_edge(n1, n2, edgeAttributes)
+      self.weight += self[n1][n2]['weight']
+
+  def removeEdge(self):
+    """ removes an edge from the tree
+        Uses selectEdge() """
+    # select an edge to remove
+    edge = self.selectEdge()
+    if edge:
+      log.debug('selected edge: %s', edge)
+      self.weight -= edge[2]['weight']
+      self.remove_edge(edge[0], edge[1])
+      return edge
+    else:
+      return None
+
+  def clients(self):
+    """ returns the clients set """
+    return self.C
+
+  def predecessor(self, node):
+    """ In a tree, each node has at most one predecessor
+        Redefine networkx predecessors method to reflect this fact
+        @returns parent node or None if given node was the root """
+    pred = self.predecessors(node)
+    if pred:
+      return pred[0]
+    else:
+      return None
+
+
+#  █████╗ ██████╗ ██████╗ ██╗████████╗██╗ ██████╗ ███╗   ██╗
+# ██╔══██╗██╔══██╗██╔══██╗██║╚══██╔══╝██║██╔═══██╗████╗  ██║
+# ███████║██║  ██║██║  ██║██║   ██║   ██║██║   ██║██╔██╗ ██║
+# ██╔══██║██║  ██║██║  ██║██║   ██║   ██║██║   ██║██║╚██╗██║
+# ██║  ██║██████╔╝██████╔╝██║   ██║   ██║╚██████╔╝██║ ╚████║
+# ╚═╝  ╚═╝╚═════╝ ╚═════╝ ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+
+  def addClient(self, c):
+    """ Subscribe a client to the multicast group
+        Adds the client to the tree and adds the needed edges
+    """
     log.debug('adding client %s' % c)
     if not c in self.nodes():
       pim_mode = Setup.get('pim_mode')
@@ -180,6 +244,8 @@ class MulticastTree(nx.DiGraph):
     self.C.add(c)
 
   def shortestPathToSource(self, client):
+    """ Use when simulated the behaviour of PIM-SSM
+    """
     NG = self.NetworkGraph
     # take the shortest path from the root to the client as connection path
     closestPath = NG.ShortestPaths[self.root][client][0]
@@ -191,6 +257,8 @@ class MulticastTree(nx.DiGraph):
     return cleanedClosestPath
 
   def shortestPathToTree(self, client):
+    """ Returns the shortest path from the client to add to the tree
+    """
     NG = self.NetworkGraph
     ShortestPathsLength = NG.ShortestPathsLength[client]
     log.debug('distances to nodes: "%s"' % ShortestPathsLength)
@@ -209,19 +277,30 @@ class MulticastTree(nx.DiGraph):
     cleanedClosestPath = self.cleanPath(closestPath, self.nodes(), [client])
     return cleanedClosestPath
 
+
+# ██████╗ ███████╗███╗   ███╗ ██████╗ ██╗   ██╗ █████╗ ██╗     
+# ██╔══██╗██╔════╝████╗ ████║██╔═══██╗██║   ██║██╔══██╗██║     
+# ██████╔╝█████╗  ██╔████╔██║██║   ██║██║   ██║███████║██║     
+# ██╔══██╗██╔══╝  ██║╚██╔╝██║██║   ██║╚██╗ ██╔╝██╔══██║██║     
+# ██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝ ╚████╔╝ ██║  ██║███████╗
+# ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚══════╝
+
   def removeClient(self, c):
-    """ removes given client c from the clients set of self """
+    """ removes given client c from the clients set of self 
+    """
     if c == self.root:
       log.error('root cannot be removed from the client set')
     elif c in self.C:
       deg = self.degree(c)
       self.C.remove(c)
       if deg == 1:
+        # Upon a removal, the tree is only modified when the degree of the node is one
         (node, removedEdges) = self.ascendingClean(c, list())
         # here, the path is removed already
         self.removeWeightFor(removedEdges)
 
         if self.usePathQueue:
+          # The modifications of the tree cause the pathQueue to change
           pathTuple = self.parentPaths[c]
           if node == self.root:
             # the clean goes up to the root, it means that pathTuple goes from root to c, just remove it
@@ -274,35 +353,14 @@ class MulticastTree(nx.DiGraph):
         log.debug("client %s of deg >=3 to remove", c)
     else:
       log.error("%s is not in the clients set", c)
-  
-  def add_edges(self, path):
-    """
-    add edges with attributes fetched from the NetworkGraph
-    @param: path: a path is a list of nodes [n1, n2, n3, n4, ..]
-    @raise: Exception if the edge is non-existent in the NetworkGraph
-    """
-    NG = self.NetworkGraph
-    GraphEdges = NG.edges()
-    log.debug('GraphEdges: %s' % GraphEdges)
-
-    for i in range(len(path) - 1):
-      n1 = path[i]
-      n2 = path[i+1]
-
-      edgeAttributes = NG[n1][n2]
-      # build and add the edge to the tree edges set
-      edgeUnique = (n1, n2) if n1<n2 else (n2, n1)
-      log.debug('have to add edge: (%s,%s)' % (n1, n2))
-      if not edgeUnique in GraphEdges:
-        raise Exception("tree is corrupted")
-
-      self.add_edge(n1, n2, edgeAttributes)
-      self.weight += self[n1][n2]['weight']
 
 
-  def clients(self):
-    """ returns the clients set """
-    return self.C
+# ██╗███╗   ███╗██████╗ ██████╗  ██████╗ ██╗   ██╗███████╗
+# ██║████╗ ████║██╔══██╗██╔══██╗██╔═══██╗██║   ██║██╔════╝
+# ██║██╔████╔██║██████╔╝██████╔╝██║   ██║██║   ██║█████╗  
+# ██║██║╚██╔╝██║██╔═══╝ ██╔══██╗██║   ██║╚██╗ ██╔╝██╔══╝  
+# ██║██║ ╚═╝ ██║██║     ██║  ██║╚██████╔╝ ╚████╔╝ ███████╗
+# ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚══════╝
 
   def improveTreeOnce(self, nb, temperature):
     """ performs one round of improvement on the tree
@@ -347,21 +405,15 @@ class MulticastTree(nx.DiGraph):
       print 'edges', self.edges()
       print 'paths', self.pathQueue.queue
       raise Exception('the multicast tree is does not represent a tree after an improveOnce call')
-      # @todo: clean this exception
 
-  def removeEdge(self):
-    """ removes an edge from the tree
-        Uses selectEdge() """
-    # select an edge to remove
-    edge = self.selectEdge()
-    if edge:
-      log.debug('selected edge: %s', edge)
-      self.weight -= edge[2]['weight']
-      self.remove_edge(edge[0], edge[1])
-      return edge
-    else:
-      return None
 
+# ███████╗██████╗  ██████╗ ███████╗    ███████╗███████╗██╗     ███████╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗
+# ██╔════╝██╔══██╗██╔════╝ ██╔════╝    ██╔════╝██╔════╝██║     ██╔════╝██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║
+# █████╗  ██║  ██║██║  ███╗█████╗      ███████╗█████╗  ██║     █████╗  ██║        ██║   ██║██║   ██║██╔██╗ ██║
+# ██╔══╝  ██║  ██║██║   ██║██╔══╝      ╚════██║██╔══╝  ██║     ██╔══╝  ██║        ██║   ██║██║   ██║██║╚██╗██║
+# ███████╗██████╔╝╚██████╔╝███████╗    ███████║███████╗███████╗███████╗╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║ 
+# ╚══════╝╚═════╝  ╚═════╝ ╚══════╝    ╚══════╝╚══════╝╚══════╝╚══════╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+                                                                                   
   def selectEdge_random(self):
     """ randomly selects and returns an edge to remove from the tree """
     edges = self.edges(data=True)
@@ -397,7 +449,6 @@ class MulticastTree(nx.DiGraph):
             equalWeights += 1
     return selectedEdge
 
-
   def selectEdge_mostExpensivePath(self):
     """ selects and returns the most expensive edge in the tree """
     if self.usePathQueue:
@@ -409,7 +460,6 @@ class MulticastTree(nx.DiGraph):
       else:
         return None
 
-
   def selectEdge_averagedMostExpensivePath(self):
     if self.usePathQueue:
       mostExpPath = self.popFirstValidPath(Setup.get('max_paths'))
@@ -420,24 +470,78 @@ class MulticastTree(nx.DiGraph):
       else:
         return None
 
+  def popFirstValidPath(self, maxPaths = 3):
+    """ pops the first valid path found in the pathQueue (which can contain invalid/non-split paths).
+        pops them in order and returns the first valid path. 
+    """
+    returnPathTuple = None
+    toRestore       = []
+    validPaths      = []
 
-  def updateTabu(self):
-    """ updates the tabu list: decrements all values by 1 and remove keys when such values reach 0 """
-    for e in self.tabuList.copy():
-      if(self.tabuList[e] == 1):
-        del self.tabuList[e]
-      else:
-        self.tabuList[e] = self.tabuList[e] - 1
+    valid = False
+    while self.pathQueue.queue and len(validPaths) < maxPaths:
+      valid     = True
+
+      pathTuple = self.pathQueue.queue[0]
+      # check if given path is valid : no coloured node or node with degree > 2
+      _, path   = pathTuple
+      for n in path[1:-1]:
+        if (n in self.C) or (self.degree(n) > 2):
+          valid = False
+          self.splitPathAroundNode(n, pathTuple)
+          break # breaks the for loop
+
+      if valid:
+        # check if one of the edges of the path is in the tabu
+        for i in range(len(path) - 1):
+          n1 = path[i]
+          n2 = path[i+1]
+          if ((n1, n2) in self.tabuList) or ((n2, n1) in self.tabuList):
+            valid = False
+            poppedPathTuple = self.pathQueue.get() # when a path is in the tabu, pop it
+            if not poppedPathTuple == pathTuple:
+              raise Exception("PathQueue is corrupted")
+            toRestore.append(poppedPathTuple)
+            break
+        if valid:
+          # add the valid path to the list of valid paths (one will be selected later on)
+          poppedPathTuple = self.pathQueue.get() 
+          # the current considered path will be added to validPaths
+          # it must be removed from the priority queue so that another may be selected
+          if not poppedPathTuple == pathTuple:
+            raise Exception("PathQueue is corrupted")
+          validPaths.append(poppedPathTuple)
+
+    for p in toRestore:
+      # restore all the paths that were removed because in the tabu
+      self.pathQueue.put(p)
+
+    if validPaths:
+      chosenPathTuple = random.choice(validPaths)
+      for p in validPaths:
+        # restore all the paths that were removed because chosen in validPaths
+        self.pathQueue.put(p)
+      self.removeTupleFromPathQueue(chosenPathTuple)
+      return chosenPathTuple[1]
+
+    else:
+      return None
+
+
+#  ██████╗██╗     ███████╗ █████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ 
+# ██╔════╝██║     ██╔════╝██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ 
+# ██║     ██║     █████╗  ███████║██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
+# ██║     ██║     ██╔══╝  ██╔══██║██║╚██╗██║██║██║╚██╗██║██║   ██║
+# ╚██████╗███████╗███████╗██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
+#  ╚═════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
 
   def cleanTree(self, parent, child):
+    """ cleans the tree, by launching
+        ascending clean from given parent node
+        descending clean from given child node
+        @returns: one node from the child connected component (or None)
+        as well as the list of edges that have been removed
     """
-    cleans the tree, by launching
-      ascending clean from given parent node
-      descending clean from given child node
-    @returns: one node from the child connected component (or None)
-      as well as the list of edges that have been removed
-    """
-
     asc   = self.ascendingClean(parent, list())
     desc  = self.descendingClean(child, list())
 
@@ -453,13 +557,15 @@ class MulticastTree(nx.DiGraph):
     return (desc[0], removedEdges)
 
   def removeWeightFor(self, path):
-    """ decrements self's weight by the cumulative weight of the given path """
+    """ decrements self's weight by the cumulative weight of the given path 
+    """
     for e in path:
       self.weight -= self.NetworkGraph[e[0]][e[1]]['weight']
 
   def ascendingClean(self, current, removedEdges):
     """ launches an ascendingClean procedure:
-        @returns: one node from the tree (the first undeleted node, or None) """
+        @returns: one node from the tree (the first undeleted node, or None) 
+    """
     log.debug('clients: %s' % self.C)
     log.debug('current: %s' % current)
     if (current in self.C) or (self.degree(current) >= 2):
@@ -476,7 +582,8 @@ class MulticastTree(nx.DiGraph):
 
   def descendingClean(self, current, removedEdges):
     """ launches an descendingClean procedure:
-        @returns: one node from the tree (the first undeleted node, or None) """
+        @returns: one node from the tree (the first undeleted node, or None) 
+    """
     if (current in self.C) or (self.degree(current) >= 2):
       return (current, removedEdges)
     else:
@@ -486,10 +593,41 @@ class MulticastTree(nx.DiGraph):
       removedEdges.append(removedEdge)
       return self.descendingClean(child, removedEdges)
 
+  def cleanPath(self, path, sT, dT):
+    """ cleans a path from the edges it contains that already are in the tree (in one direction or the other).
+        Needed to avoid creating loops in the tree upon reconnection
+        @param: path: the path to clean
+        @todo: rewrite, when it works, idea: keep only one node f each sub tree in the cleaned path
+    """
+    cleanedPath = []
+    firstInST = 0
+    for i in reversed(range(len(path))):
+      if path[i] in sT:
+        cleanedPath.append(path[i])
+        firstInST = i
+        break
+    for i in range(firstInST+1, len(path)):
+      if not path[i] in dT:
+        cleanedPath.append(path[i])
+      else:
+        cleanedPath.append(path[i])
+        break
+
+    return cleanedPath
+
+
+# ██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗███╗   ██╗███████╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗ 
+# ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║████╗  ██║██╔════╝██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║  
+# ██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║█████╗  ██║        ██║   ██║██║   ██║██╔██╗ ██║ 
+# ██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║██║╚██╗██║██╔══╝  ██║        ██║   ██║██║   ██║██║╚██╗██║  
+# ██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║██║ ╚████║███████╗╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║  
+# ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+
   def reconnectCC(self, subRoot, removedEdges, temperature, onlyBest=False):
     """ aims at reconnecting the two connected components after an edge removal
         potentially inverts edge directions
-        @returns: False when he reconnection path is the same as the previously removed one """
+        @returns: False when he reconnection path is the same as the previously removed one 
+    """
     # select a path (at least one edge) to add (may be the same one)
     newPathInstalled = True
     log.debug('subRoot: %s' % subRoot)
@@ -522,7 +660,6 @@ class MulticastTree(nx.DiGraph):
     self.add_edges(bestPath)
 
     return (newPathInstalled, degrading)
-
 
   def selectReconnectionPath(self, sourceTreeNodes, descTreeNodes, removedEdges, temperature):
     """ selects reconnection path between the two components 
@@ -594,9 +731,9 @@ class MulticastTree(nx.DiGraph):
 
     return (None, degrading)
 
-
   def nodePathToEdgePath(self, nodePath):
-    """ converts a path expressed as [n1, n2, n3] to the tuple representation [(n1, n2), (n2, n3), (n3, n3)] """
+    """ converts a path expressed as [n1, n2, n3] to the tuple representation [(n1, n2), (n2, n3), (n3, n3)] 
+    """
     returnedList = []
     for i in range(len(nodePath) - 1):
       n1 = nodePath[i]
@@ -605,7 +742,9 @@ class MulticastTree(nx.DiGraph):
     return returnedList
 
   def edgePathToNodePath(self, edgePath):
-    """ converts a path expressed as tuple representation [(n1, n2), (n2, n3), (n3, n3)] to a list of nodes representation: [n1, n2, n3] """
+    """ converts a path expressed as tuple representation [(n1, n2), (n2, n3), (n3, n3)] 
+        to a list of nodes representation: [n1, n2, n3] 
+    """
     n1, n2    = edgePath[0]
     nodePath  = [n1, n2]
     for e in edgePath[1:]:
@@ -615,20 +754,48 @@ class MulticastTree(nx.DiGraph):
       nodePath.append(n2)
     return nodePath
 
+
+# ████████╗ █████╗ ██████╗ ██╗   ██╗
+# ╚══██╔══╝██╔══██╗██╔══██╗██║   ██║
+#    ██║   ███████║██████╔╝██║   ██║
+#    ██║   ██╔══██║██╔══██╗██║   ██║
+#    ██║   ██║  ██║██████╔╝╚██████╔╝
+#    ╚═╝   ╚═╝  ╚═╝╚═════╝  ╚═════╝ 
+
   def addPathToTabu(self, path):
-    """ adds given path to the tabu list with initial ttl value """
+    """ adds given path to the tabu list with initial ttl value 
+    """
     for i in range(len(path) - 1):
       n1  = path[i]
       n2  = path[i+1]
       e   = (n1, n2)
       self.tabuList[e] = self.ttl+1
 
+  def updateTabu(self):
+    """ updates the tabu list: decrements all values by 1 and remove keys when such values reach 0 
+    """
+    for e in self.tabuList.copy():
+      if(self.tabuList[e] == 1):
+        del self.tabuList[e]
+      else:
+        self.tabuList[e] = self.tabuList[e] - 1
+
   def emptyTabu(self):
-    """ empty the tabu list """
+    """ empty the tabu list 
+    """
     self.tabuList = {}
 
+
+# ██████╗ ███████╗██████╗  ██████╗  ██████╗ ████████╗
+# ██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝
+# ██████╔╝█████╗  ██████╔╝██║   ██║██║   ██║   ██║   
+# ██╔══██╗██╔══╝  ██╔══██╗██║   ██║██║   ██║   ██║   
+# ██║  ██║███████╗██║  ██║╚██████╔╝╚██████╔╝   ██║   
+# ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝  
+
   def reRoot(self, newRoot, oldRoot):
-    """ launches a reroot procedure from given oldRoot to given newRoot """
+    """ launches a reroot procedure from given oldRoot to given newRoot 
+    """
     # when rerooting, some paths may be inverted, and thus, must change in the path priority queue
     # if oldRoot is a black node and is now of degree 2, two paths must be merged into one
 
@@ -661,9 +828,17 @@ class MulticastTree(nx.DiGraph):
       n1 = n2
 
 
+# ██████╗  █████╗ ████████╗██╗  ██╗ ██████╗ ██╗   ██╗███████╗██╗   ██╗███████╗
+# ██╔══██╗██╔══██╗╚══██╔══╝██║  ██║██╔═══██╗██║   ██║██╔════╝██║   ██║██╔════╝
+# ██████╔╝███████║   ██║   ███████║██║   ██║██║   ██║█████╗  ██║   ██║█████╗  
+# ██╔═══╝ ██╔══██║   ██║   ██╔══██║██║▄▄ ██║██║   ██║██╔══╝  ██║   ██║██╔══╝  
+# ██║     ██║  ██║   ██║   ██║  ██║╚██████╔╝╚██████╔╝███████╗╚██████╔╝███████╗
+# ╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚══▀▀═╝  ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝
+
   def invertPathsFromNewRootToOldRoot(self, newRoot, oldRoot):
     """ rerooting case when a rerooting needs to be done from oldRoot to newRoot.
-        Invert all the paths from oldRoot to newRoot """
+        Invert all the paths from oldRoot to newRoot 
+    """
     currentRoot = newRoot
     toInvert    = []
 
@@ -686,11 +861,11 @@ class MulticastTree(nx.DiGraph):
     for t in toInvert:
       self.invertPath(t)
 
-
   def splitPathContainingNewRoot(self, newRoot, oldRoot):
     """ transform the case when newRoot is inside a path into the simpler case when 
         there is a path starting and ending at newRoot
-        newRoot is the node where the split is to be done """
+        newRoot is the node where the split is to be done 
+    """
     borderNodeFound = False
     pathContainingNewRoot = None
     n1 = newRoot
@@ -715,87 +890,6 @@ class MulticastTree(nx.DiGraph):
           raise Exception("Error in path splitting while rerooting, a root different from oldRoot has been reached")
     self.splitPathAroundNode(newRoot, pathContainingNewRoot)
 
-
-  def cleanPath(self, path, sT, dT):
-    """
-    cleans a path from the edges it contains that already are in the tree (in one direction or the other).
-    Needed to avoid creating loops in the tree upon reconnection
-    @param: path: the path to clean
-    @todo: rewrite, when it works, idea: keep only one node f each sub tree in the cleaned path
-    """
-    cleanedPath = []
-    firstInST = 0
-    for i in reversed(range(len(path))):
-      if path[i] in sT:
-        cleanedPath.append(path[i])
-        firstInST = i
-        break
-    for i in range(firstInST+1, len(path)):
-      if not path[i] in dT:
-        cleanedPath.append(path[i])
-      else:
-        cleanedPath.append(path[i])
-        break
-
-    return cleanedPath
-
-
-  def popFirstValidPath(self, maxPaths = 3):
-    """ pops the first valid path found in the pathQueue (which can contain invalid/non-split paths).
-        pops them in order and returns the first valid path. """
-    returnPathTuple = None
-    toRestore       = []
-    validPaths      = []
-
-    valid = False
-    while self.pathQueue.queue and len(validPaths) < maxPaths:
-      valid     = True
-
-      pathTuple = self.pathQueue.queue[0]
-      # check if given path is valid : no coloured node or node with degree > 2
-      _, path   = pathTuple
-      for n in path[1:-1]:
-        if (n in self.C) or (self.degree(n) > 2):
-          valid = False
-          self.splitPathAroundNode(n, pathTuple)
-          break # breaks the for loop
-
-      if valid:
-        # check if one of the edges of the path is in the tabu
-        for i in range(len(path) - 1):
-          n1 = path[i]
-          n2 = path[i+1]
-          if ((n1, n2) in self.tabuList) or ((n2, n1) in self.tabuList):
-            valid = False
-            poppedPathTuple = self.pathQueue.get() # when a path is in the tabu, pop it
-            if not poppedPathTuple == pathTuple:
-              raise Exception("PathQueue is corrupted")
-            toRestore.append(poppedPathTuple)
-            break
-        if valid:
-          # add the valid path to the list of valid paths (one will be selected later on)
-          poppedPathTuple = self.pathQueue.get() 
-          # the current considered path will be added to validPaths
-          # it must be removed from the priority queue so that another may be selected
-          if not poppedPathTuple == pathTuple:
-            raise Exception("PathQueue is corrupted")
-          validPaths.append(poppedPathTuple)
-
-    for p in toRestore:
-      # restore all the paths that were removed because in the tabu
-      self.pathQueue.put(p)
-
-    if validPaths:
-      chosenPathTuple = random.choice(validPaths)
-      for p in validPaths:
-        # restore all the paths that were removed because chosen in validPaths
-        self.pathQueue.put(p)
-      self.removeTupleFromPathQueue(chosenPathTuple)
-      return chosenPathTuple[1]
-
-    else:
-      return None
-
   def addToPathQueue(self, path):
     """ pre:  the path should be in the right way, that is, the first node 
               of the path is the one that is part of the tree component containing the root
@@ -807,7 +901,9 @@ class MulticastTree(nx.DiGraph):
     self.addTupleToPathQueue(pathTuple)
 
   def addTupleToPathQueue(self, pathTuple):
-    """ @todo ??? """
+    """ adds a tuple to the path queue 
+        each tuple contains a path and its weight (negated)
+    """
     n1 = pathTuple[1][0]  # first node of the path
     n2 = pathTuple[1][-1] # last node of the path
 
@@ -911,6 +1007,20 @@ class MulticastTree(nx.DiGraph):
     self.replacePaths([pathTuple], [newPathTuple])
 
 
+# ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ████████╗███████╗██████╗     
+# ██╔════╝██║████╗ ████║██║   ██║██║     ██╔══██╗╚══██╔══╝██╔════╝██╔══██╗    
+# ███████╗██║██╔████╔██║██║   ██║██║     ███████║   ██║   █████╗  ██║  ██║    
+# ╚════██║██║██║╚██╔╝██║██║   ██║██║     ██╔══██║   ██║   ██╔══╝  ██║  ██║    
+# ███████║██║██║ ╚═╝ ██║╚██████╔╝███████╗██║  ██║   ██║   ███████╗██████╔╝    
+# ╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═════╝     
+                                                                            
+#  █████╗ ███╗   ██╗███╗   ██╗███████╗ █████╗ ██╗     ██╗███╗   ██╗ ██████╗   
+# ██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗██║     ██║████╗  ██║██╔════╝   
+# ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗  
+# ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║  
+# ██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║███████╗██║██║ ╚████║╚██████╔╝  
+# ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+
   def evaluateSAProbability(self, oldWeight, newWeight, temperature):
     """
     returns True if we want to replace paths according to the temperature and their weights
@@ -942,19 +1052,13 @@ class MulticastTree(nx.DiGraph):
       # improving
       return True
 
-  def predecessor(self, node):
-    """ In a tree, each node has at most one predecessor
-        Redefine networkx predecessors method to reflect this fact
-        @returns parent node or None if given node was the root """
-    pred = self.predecessors(node)
-    if pred:
-      return pred[0]
-    else:
-      return None
 
-  def export(self, outfile):
-    nx.draw_graphviz(self)
-    nx.write_dot(self, outfile)
+# ██╗   ██╗ █████╗ ██╗     ██╗██████╗  █████╗ ████████╗██╗ ██████╗ ███╗   ██╗
+# ██║   ██║██╔══██╗██║     ██║██╔══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║
+# ██║   ██║███████║██║     ██║██║  ██║███████║   ██║   ██║██║   ██║██╔██╗ ██║
+# ╚██╗ ██╔╝██╔══██║██║     ██║██║  ██║██╔══██║   ██║   ██║██║   ██║██║╚██╗██║
+#  ╚████╔╝ ██║  ██║███████╗██║██████╔╝██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║
+#   ╚═══╝  ╚═╝  ╚═╝╚══════╝╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
   def validate(self):
     """ validates that self is a valid multicast service with respect to the inner clients set """
