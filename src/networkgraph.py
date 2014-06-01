@@ -17,9 +17,6 @@ import haversine
 from utils import Utils
 from setup import Setup
 
-# @todo remove
-# from guppy import hpy; h=hpy()
-
 # for saving/loading the shortest paths to/from a file
 import cPickle as pickle
 
