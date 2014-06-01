@@ -7,15 +7,11 @@
 # -m cProfile -o stats -s time
 import sys
 import argparse
-import networkx as nx
-from multicasttree import MulticastTree
 from networkgraph import NetworkGraph
 from utils import Utils
 from setup import Setup
 import logging as log
-import random
 import time
-import sys
 
 """ This script launches a typical construction of a multicast tree
     according to an action sequence """

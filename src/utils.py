@@ -6,9 +6,7 @@ import random
 import logging as log
 from statistics import Statistics
 import warnings
-import sys
 import math
-from setup import Setup
 
 import datetime
 

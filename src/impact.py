@@ -7,7 +7,6 @@ import sys, os
 from utils import Utils
 from setup import Setup
 import logging as log
-import csv
 
 from pylab import boxplot, savefig, figure, tight_layout
 from matplotlib import gridspec

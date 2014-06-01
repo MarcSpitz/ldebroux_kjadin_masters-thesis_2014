@@ -5,8 +5,6 @@
 from setup import Setup
 import logging as log
 from time import clock
-import random
-import copy
 from utils import Utils
 
 class ImproveMethods:

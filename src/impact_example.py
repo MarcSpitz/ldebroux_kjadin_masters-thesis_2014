@@ -3,16 +3,10 @@
 # @author: Debroux Léonard  <leonard.debroux@gmail.com>
 # @author: Jadin   Kevin    <contact@kjadin.com>
 
-import sys, os
-from utils import Utils
-from setup import Setup
 import logging as log
-import csv
-
 from pylab import boxplot, show, savefig, figure, tight_layout
 from matplotlib import gridspec
 from matplotlib import rc
-
 
 """ Similar to impact.py, the data to plot are in impactDict """
 

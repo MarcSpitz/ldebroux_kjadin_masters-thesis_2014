@@ -5,7 +5,7 @@
 # references : visualisation tool : http://gephi.org/
 #              http://networkx.lanl.gov/examples/drawing/index.html
 
-import sys, os
+import os
 import networkx as nx
 import matplotlib.pyplot as plt
 from multicasttree import MulticastTree
@@ -151,7 +151,9 @@ class NetworkGraph(nx.Graph):
     nx.write_dot(self, outfile)
 
   def getEdgePathWeight(self, path):
-    """ Compute the weight of a path expressed as [edge1, edge2, ..., edgeN], where edges are couples of nodes """
+    """ Compute the weight of a path expressed as [edge1, edge2, ..., edgeN], 
+        where edges are couples of nodes 
+    """
     totWeight = 0
     for e in path:
       n1, n2 = e

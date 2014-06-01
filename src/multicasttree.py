@@ -14,7 +14,6 @@ import nx_pylab
 from Queue import PriorityQueue
 from utils import Utils
 from setup import Setup
-import time
 import copy
 import math
 
@@ -894,7 +893,8 @@ class MulticastTree(nx.DiGraph):
     """ pre:  the path should be in the right way, that is, the first node 
               of the path is the one that is part of the tree component containing the root
         The path should not have already been added to the tree
-        Called whenever a path is added to the tree """
+        Called whenever a path is added to the tree 
+    """
     pathWeight  = self.NetworkGraph.getNodePathWeight(path)
     pathTuple   = (-pathWeight, path)
 

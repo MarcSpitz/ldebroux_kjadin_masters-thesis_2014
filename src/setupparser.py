@@ -7,7 +7,6 @@ import sys, os
 import configparser
 from setup import Setup
 from datasets import readDataset
-# import optparse
 import argparse
 
 def getValueForKey(dictionary, key):
@@ -20,36 +19,23 @@ def readSetupsConfig(configFile):
   config.read(configFile)
 
   sections = config.sections()
-  # print "sections", sections
+  log.debug("sections: %s" % sections)
 
   main_section_string = 'main'
   main_section = getValueForKey(config, main_section_string)
   testname  = getValueForKey(main_section, 'name')
   tests     = getValueForKey(main_section, 'tests')
-  # print "testname", testname
+  log.debug("testname: %s" % testname)
 
   main = dict(
       name = testname,
       tests = int(tests),
       columnRef = int(getValueForKey(main_section, 'columnRef') if 'columnRef' in main_section else -1)
     )
-  
-  # generation_section = getValueForKey(config, 'generation')
-  # datasets  = int(getValueForKey(generation_section, 'datasets'))
-  # tests     = int(getValueForKey(generation_section, 'tests'))
-  # probaJoin = float(getValueForKey(generation_section, 'probaJoin'))
-  # meanTimeInTree = int(getValueForKey(generation_section, 'meanTimeInTree'))
-  # ticks     = int(getValueForKey(generation_section, 'ticks'))
-
-  # generation = dict(datasets        = datasets,
-  #                   tests           = tests,
-  #                   probaJoin       = probaJoin,
-  #                   meanTimeInTree  = meanTimeInTree,
-  #                   ticks           = ticks)
 
   # setups
   setups = sections[1:]
-  # print "setups", setups
+  log.debug("setups: %s" % setups)
 
   def validateDict(dictionary):
     for (k,v) in dictionary.iteritems():
@@ -59,10 +45,10 @@ def readSetupsConfig(configFile):
   for setupName in setups:
     setupDict = dict(config[setupName])
     validateDict(setupDict)
-    # print "setupDict", setupDict
+    log.debug("setupDict: %s" % setupDict)
     setupsList.append(setupDict)
 
-  # print "setupsList", setupsList
+  log.debug("setupsList: %s" % setupsList)
 
   return main, setupsList
 
@@ -71,7 +57,7 @@ def readTopologyConfig(configFile):
   config.read(configFile)
 
   sections = config.sections()
-  # print "sections", sections
+  log.debug("sections: %s" % sections)
 
   main_section_string = 'main'
   main_section = getValueForKey(config, main_section_string)
@@ -83,11 +69,10 @@ def readTopologyConfig(configFile):
                       shortest_paths_file = getValueForKey(main_section, 'shortest_paths_file')
                       )
   
-  # print "topologyDict", topologyDict
+  log.debug("topologyDict: %s" % topologyDict)
   return topologyDict
 
 def configure_parser():
-  # opt = optparse.OptionParser()
   parser = argparse.ArgumentParser()
   parser.add_argument('--config', '-c',
                       type=str,
@@ -98,7 +83,6 @@ def configure_parser():
   parser.add_argument('--datasets', '-d',
                       nargs='+',
                       type=str,
-                      # default=[],
                       help="topology file")
 
   parser.add_argument("-v", "--verbosity",
@@ -152,7 +136,7 @@ def parseConfigArguments(argv):
                   directory   = options.directory,
                   verbosity   = options.verbosity
                   )
-  # print "args", args
+  log.debug("args: %s" % args)
   return args
 
 def testing(argv):
