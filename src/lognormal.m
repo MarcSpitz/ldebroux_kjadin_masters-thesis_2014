@@ -1,3 +1,6 @@
+ % @author: Debroux Léonard  <leonard.debroux@gmail.com>
+ % @author: Kevin Jadin      <contact@kjadin.com>
+
 mean = 150;
 var = (mean/2)^2;
 
