@@ -4,6 +4,17 @@
 *   Debroux Léonard -- leonard.debroux@gmail.com
 *   Jadin Kevin -- contact@kjadin.com
 
+## Abstract ##
+Software-defined networking (SDN) provides additional knowledge compared to classical networks. 
+This knowledge can be exploited in centralised algorithms as opposed to the commonly used distributed algorithms such as in PIM.
+The problem of implementing multicast in SDN has already been studied in the literature. 
+However, the optimality of multicast trees is often not the main focus of the researches.
+
+In this thesis, we show that the SDN approach allows for easily building efficient trees, and we provide a method to further improve them.
+The problem of computing optimal distribution trees in the context of multicast is known to be NP-complete, we therefore propose a configurable local search algorithm to compute competitive trees along with a Python implementation.
+
+Furthermore, we assess that our algorithm is computationally efficient. It is consequently applicable in a real environment since it needs little time to yield good solutions. 
+
 ## Executables ##
 
 ### Python
