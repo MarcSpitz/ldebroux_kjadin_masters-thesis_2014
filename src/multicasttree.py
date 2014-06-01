@@ -596,7 +596,6 @@ class MulticastTree(nx.DiGraph):
     """ cleans a path from the edges it contains that already are in the tree (in one direction or the other).
         Needed to avoid creating loops in the tree upon reconnection
         @param: path: the path to clean
-        @todo: rewrite, when it works, idea: keep only one node f each sub tree in the cleaned path
     """
     cleanedPath = []
     firstInST = 0
@@ -666,8 +665,6 @@ class MulticastTree(nx.DiGraph):
         applies the search_strategy parameter 
         allows to degrade with probability derived from given temperature only if intensify_only parameter is set to False """
     
-    # cost to achieve in order to improve
-
     removedPath = self.edgePathToNodePath(removedEdges)
     toImprove   = self.NetworkGraph.getEdgePathWeight(removedEdges)
     log.debug("cost to improve : toImprove = %s" % toImprove)

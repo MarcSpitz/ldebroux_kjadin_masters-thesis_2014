@@ -11,19 +11,24 @@ import networkx as nx
 
 from utils import Utils 
 
+""" Script for generating scenarios """
+
 def probabilityFloat ( string ):
+  """ parsing function for probability """
   value = float( string )
   if value < 0 or value > 1:
     raise argparse.ArgumentTypeError('has to be a float value between 0.0 and 1.0')
   return value
 
 def positiveFloat ( string ):
+  """ parsing function for float """
   value = float( string )
   if value <= 0.0:
     raise argparse.ArgumentTypeError('has to be a strictly positive float')
   return value
 
 def positiveInt ( string ):
+  """ parsing function for positive integer """
   value = int( string )
   if value <= 0:
     raise argparse.ArgumentTypeError('has to be a strictly positive integer')
@@ -33,40 +38,36 @@ def configure_parser():
 
   parser = argparse.ArgumentParser()
 
-  # parser.add_argument('-d', '--datasets',
-  #                     nargs='+',
-  #                     type=str,
-  #                     help="TODO",
-  #                     default=[])
-
-  parser.add_argument("topology", 
+  parser.add_argument("topology",
                       type=str,
                       help="the GML topology file",
                       default="")
 
+  parser.add_argument("-o", "--output",
+                      type=str,
+                      help="file name for saving shortest paths structures",
+                      default=None)
+
   parser.add_argument('-r', '--root',
                       type=int,
-                      help="root node of the tree",
+                      help="root node of the tree for this scenario",
                       default=None)
-  parser.add_argument("-o", "--output", 
-                      type=str,
-                      help="Filename for saving shortest paths structures",
-                      default=None)
+  
   parser.add_argument("-p", "--join-probability", 
                       type=probabilityFloat,
-                      help="TODO",
+                      help="probability for a node in the topology to join the tree",
                       default=None)
   parser.add_argument('-m', '--mean-time',
                       type=positiveFloat,
-                      help="TODO",
+                      help="mean time a client stays in the tree",
                       default=None)
   parser.add_argument('-t', '--ticks',
                       type=positiveInt,
-                      help="TODO",
+                      help="number of ticks composing the generated scenario",
                       default=None)
 
   parser.add_argument("-v", "--verbosity",
-                      help="verbose output",
+                      help="sets verbosity",
                       action="count",
                       default=0)
   return parser
