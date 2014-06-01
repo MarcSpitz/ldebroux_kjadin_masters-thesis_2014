@@ -1,20 +1,12 @@
-Masters-thesis
-==============
+# Local search for Multicast in Software-Defined Networks #
 
-Title
------
-Local search for Multicast in Software-Defined Networks
+## Authors ##
+*   Debroux Léonard -- leonard.debroux@gmail.com
+*   Jadin Kevin -- contact@kjadin.com
 
-Authors
--------
-Debroux Léonard, Jadin Kevin
+## Executables ##
 
-
-Executables
-===========
-
-Python
-------
+### Python
 *   src/addition_removal_time.py
 *   src/build_network.py
 *   src/comparison.py
@@ -24,8 +16,7 @@ Python
 *   src/ksp.py
 *   src/setupparser.py
 
-Bash
-----
+### Bash
 *   evaluation/add_rem
 *   evaluation/impact
 *   evaluation/compare (need to give a folder containing .cfg files)
@@ -39,16 +30,12 @@ Bash
   *   7-rssb
   *   8-unfair
 
-Matlab script
--------------
+### Matlab script
 *   src/lognormal.m
 
+## Files ##
 
-Files
-=====
-
-evaluation/
------------
+### evaluation/
 *   datasets/
     *   **/*.ds : datasets that were used for the experiments
 *   results/
@@ -58,13 +45,11 @@ evaluation/
     *   comparison/**/*.csv : results of the comparison experiments
 *   add_rem, compare, impact: scripts for testing
 
-src/
-----
+### src/
 Source code and testing scripts
 
 
-topologies/
------------
+### topologies/
 *   *.gml : gml representation of the topologies
 *   *.sp : shortest paths between all nodes in the graph
 *   *.topo: configuration files linking a topology to its .gml and .sp
