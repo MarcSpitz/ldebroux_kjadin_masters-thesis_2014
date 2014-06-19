@@ -99,7 +99,7 @@ class ComparisonTest(AbstractTest):
         for idx in range(tests):
           log.debug('test %s' % idx)
                     
-          _, tickCosts, improveTry, _, _, _ = Utils.run_setup(NGdict[k], root, events)
+          T, tickCosts, improveTry, _, _, _ = Utils.run_setup(NGdict[k], root, events)
 
           self.writeDataHeader(f, dataSetIndex, setupIndex, idx)
           writeNewline('tickcosts: %s' % tickCosts, f)
@@ -113,8 +113,12 @@ class ComparisonTest(AbstractTest):
             maxImprove = max(improveTry)
           
           avgCost = numpy.mean(tickCosts)
-
           indexCostList.append(avgCost) 
+
+          # export the Tree as .json format
+          jsonFileName = "%s_setup-%s_index-%s.json" % (prependstr, setupIndex, idx) 
+          jsonFileName = os.path.join(self.working_directory, jsonFileName)
+          T.export_json(jsonFileName, avgCost)
 
         m = numpy.mean(indexCostList)
         s = numpy.std(indexCostList)

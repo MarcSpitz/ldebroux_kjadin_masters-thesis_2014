@@ -16,7 +16,7 @@ from utils import Utils
 from setup import Setup
 import copy
 import math
-
+import json
 
 class MulticastTree(nx.DiGraph):
   """ MulticastTree class """
@@ -110,6 +110,36 @@ class MulticastTree(nx.DiGraph):
     plt.show(block=False)
     # clean plot
     plt.clf()
+
+  def export_json(self, fname, avgWeight):
+    
+    infoDict = dict(weight = self.weight, 
+                    clients = len(self.C),
+                    edges = self.number_of_edges(),
+                    avgWeight = avgWeight
+                    )
+
+    linksDicts = [dict( source=u, target=v, 
+                        weight = self.edge[u][v]['weight']) 
+                    for u,v in self.edges()]
+    
+    def getType(n):
+      if n not in self.nodes():
+        t = "shaded"
+      elif n in self.C:
+        if n == self.root:
+          t = "root"
+        else:
+          t = "client"
+      else:
+        t = ""
+      return t
+
+    nodesDicts = [dict(name=n, id=n, type=getType(n)) 
+                    for n in self.NetworkGraph.nodes()]
+    
+    json.dump(dict(links = linksDicts, nodes = nodesDicts, treeInfo = infoDict),
+                open(fname, 'w'), indent=2)
 
   def draw(self):
     """ draw the tree on top of the graph """
