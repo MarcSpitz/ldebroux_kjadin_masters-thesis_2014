@@ -554,11 +554,11 @@
 
     <!-- Evaluation -->
     <div id="evaluation-overview" class="step border centered" data-x="0" data-y="900" data-z="500">
-      <h1>Evaluation</h1>
+      <h1 style="position: relative;left: 275px;">Evaluation</h1>
     </div>
 
       <!-- Stack -->
-      <div class="step border slide" data-x="-500" data-y="800" data-z="500" data-scale=".25">
+      <div class="step border slide" data-x="-500" data-y="550" data-z="500" data-scale=".25">
         <h1 class="centered">Evaluation</h1>
         <h2 style="line-height: 1.5;">
         <ul>
@@ -580,8 +580,7 @@
       </div>
 
       <!-- Stack -->
-
-      <div class="step fullvisible" data-x="0" data-y="800" data-z="500" data-scale=".25">
+      <div class="step fullvisible" data-x="100" data-y="800" data-z="500" data-scale=".25">
         <h1 class="centered">PIM-SSM</h1>
         <h2 style="line-height: 1.5;">
         <div id="d3_pim_svg"></div>
@@ -589,7 +588,7 @@
         </h2>
       </div>
 
-      <div class="step fullvisible" data-x="350" data-y="800" data-z="500" data-scale=".25">
+      <div class="step fullvisible" data-x="450" data-y="800" data-z="500" data-scale=".25">
         <h1 class="centered">Greedy</h1>
         <h2 style="line-height: 1.5;">
         <div id="d3_greedy_svg"></div>
@@ -597,7 +596,7 @@
         </h2>
       </div>
 
-      <div class="step fullvisible" data-x="0" data-y="1075" data-z="500" data-scale=".25">
+      <div class="step fullvisible" data-x="100" data-y="1075" data-z="500" data-scale=".25">
         <h1 class="centered">Optimisation</h1>
         <h2 style="line-height: 1.5;">
         <div id="d3_opti_svg"></div>
@@ -605,19 +604,93 @@
         </h2>
       </div>
 
-      <div class="step fullvisible" data-x="350" data-y="1075" data-z="500" data-scale=".25">
-        <div class="midpadding">
-          <h1 style="line-height: 1.5;">
-          Improvement over PIM-SSM
-          <ul>
-            <li>Greedy: 21%</li>
-            <li>Optimised: 28%</li>
-          </ul>
-          </h1>
+      <div class="step border slide noclick" data-x="275" data-y="925" data-z="499" data-scale=".5">
+        <div id="results" class="midpadding">
+          <h2 style="line-height: 1.5;">
+            Improvement over PIM-SSM
+            <ul style="padding-left: 100px;">
+              <li>Greedy: 21%</li>
+              <li>Optimised: 28%</li>
+            </ul>
+          </h2>
         </div>
       </div>
 
-      <div class="step border centered" data-x="175" data-y="925" data-z="500" data-scale=".5">
+      <!-- Stack -->
+      <div class="step border slide nopadding" data-x="-500" data-y="900" data-z="500" data-scale=".25">
+        <h1 class="centered">Time requirements</b></h1>
+        <br/>
+        <h2 class="centered">Time needed for handling events</h2>
+        <br/>
+        <br/>
+        <table class="center centered smlpadding">
+          <tr>
+            <td>
+              <img src="images/tiscali_addition.svg" height="105%"></img>
+            </td>
+            <td>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <img src="images/kdl_addition.svg" height="105%"></img>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="step border slide nopadding" data-x="-500" data-y="900" data-z="250" data-scale=".25">
+        <h1 class="centered">Time requirements</b></h1>
+        <br/>
+        <h2 class="centered">Time needed for optimising</h2>
+        <br/>
+        When improving often enough:<br/>
+        Increasing the allocated time from 25ms to 100ms and 200ms<br/>
+        &#8658; Improvement of 1 to 2%<br/>
+        CCL: quickly finds good solutions
+      </div>
+
+      <div class="step border slide" data-x="-500" data-y="900" data-z="0" data-scale=".25">
+        <h1 class="centered">Time requirements</h1>
+        <br/>
+        <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
+          Conclusion on time requirements:
+          <ul>
+            <li>Events handling is fast</li>
+            <li>Few time is needed to improve significantly</li>
+          </ul>
+          &#8658; The algorithm is suited for real applications
+        </h2>
+      </div>
+
+      <!-- Stack -->
+      <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="500" data-scale=".25">
+        <h1 class="centered">Impact of improving</b></h1>
+        <br/>
+        <table class="center centered smlpadding">
+          <tr>
+            <td>
+              <img src="images/404.svg" height="140%"></img>
+            </td>
+            <td>
+              <img src="images/404.svg" height="140%"></img>
+            </td>
+            <td>
+              <img src="images/404.svg" height="140%"></img>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="250" data-scale=".25">
+        <h1 class="centered">Impact of improving</b></h1>
+        <br/>
+        <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
+          <ul>
+            <li>Improving to often is pointless</li>
+            <li>Improving has a great impact on the tree</li>
+          </ul>
+          &#8658; Not every improvement found should be applied: "Is it worth it ?" 
+        </h2>
       </div>
 
 </div>
