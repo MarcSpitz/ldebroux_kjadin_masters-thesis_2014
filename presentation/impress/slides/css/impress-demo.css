@@ -75,10 +75,13 @@ table {
 }
 
 td {
-    padding: 50px;
 }
 
 tr {
+}
+
+h1 {
+
 }
 
 /*
@@ -143,8 +146,20 @@ a:focus {
     And then we hide the message, when support is detected in the browser.
 */
 
-.width50 {
-    width: 70%;
+.bigpadding td {
+    padding: 100px;
+}
+
+.midpadding td {
+    padding: 50px;
+}
+
+.smlpadding td {
+    padding: 20px;
+}
+
+.nopadding td {
+    padding: 0px;
 }
 
 .vertical-center {
@@ -249,6 +264,7 @@ a:focus {
     font-size: 30px;
     line-height: 36px;
     letter-spacing: -1px;
+
 }
 
 .centered {
@@ -261,6 +277,7 @@ a:focus {
 }
 
 .slide q {
+
     display: block;
     font-size: 50px;
     line-height: 72px;
@@ -270,6 +287,27 @@ a:focus {
 
 .slide q strong {
     white-space: nowrap;
+}
+
+.slide h1 {
+    font-size: 60px;
+    line-height: 70px;
+
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
+}
+
+.slide h2 {
+    font-size: 25px;
+    line-height: 25px;
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
 }
 
 /*
