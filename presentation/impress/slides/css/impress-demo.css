@@ -81,7 +81,6 @@ tr {
 }
 
 h1 {
-
 }
 
 /*
@@ -204,7 +203,11 @@ a:focus {
 .step {
     position: relative;
     width: 1600px;
-    padding: 40px;
+    /*padding: 40px;*/
+
+    height: 1200px;
+    padding: 40px 60px;
+
     margin: 20px auto;
 
     -webkit-box-sizing: border-box;
@@ -213,9 +216,17 @@ a:focus {
     -o-box-sizing:      border-box;
     box-sizing:         border-box;
 
-    font-family: 'PT Serif', georgia, serif;
+   /* font-family: 'Open Sans', Arial, sans-serif;
     font-size: 48px;
-    line-height: 1.5;
+    line-height: 1.5;*/
+
+    color: rgb(102, 102, 102);
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: -1px;
 }
 
 /*
@@ -236,6 +247,63 @@ a:focus {
 
 .impress-enabled .step.active { opacity: 1 }
 
+.step q {
+
+    display: block;
+    font-size: 50px;
+    line-height: 72px;
+
+    margin-top: 100px;
+}
+
+.step q strong {
+    white-space: nowrap;
+}
+
+.step h1 {
+    font-size: 100px;
+    line-height: 120px;
+
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
+}
+
+.step h2 {
+    font-size: 60px;
+    line-height: 70px;
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
+}
+
+.step h3 {
+    font-size: 25px;
+    line-height: 25px;
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
+}
+
+.border {
+
+    display: block;
+
+/*    width: 1600px;
+    height: 1200px;
+    padding: 40px 60px;*/
+
+    border: 4px solid rgba(0, 0, 0, .3);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
+}
+
 /*
     These 'slide' step styles were heavily inspired by HTML5 Slides:
     http://html5slides.googlecode.com/svn/trunk/styles.css
@@ -245,48 +313,7 @@ a:focus {
     They cover everything what you see on first three steps of the demo.
 */
 .slide {
-
-    display: block;
-
-    width: 1600px;
-    height: 1200px;
-    padding: 40px 60px;
-
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, .3);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
-
-    color: rgb(102, 102, 102);
-    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
-
-    font-family: 'Open Sans', Arial, sans-serif;
-    font-size: 30px;
-    line-height: 36px;
-    letter-spacing: -1px;
-
-}
-
-.border {
-
-    display: block;
-
-    width: 1500px;
-    height: 1125px;
-    padding: 40px 60px;
-
-    border: 1px solid rgba(0, 0, 0, .3);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
-
-    color: rgb(102, 102, 102);
-    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
-
-    font-family: 'Open Sans', Arial, sans-serif;
-    font-size: 30px;
-    line-height: 36px;
-    letter-spacing: -1px;
-
 }
 
 .centered {
@@ -296,40 +323,6 @@ a:focus {
 .center {
     margin-left: auto;
     margin-right: auto;
-}
-
-.slide q {
-
-    display: block;
-    font-size: 50px;
-    line-height: 72px;
-
-    margin-top: 100px;
-}
-
-.slide q strong {
-    white-space: nowrap;
-}
-
-.slide h1 {
-    font-size: 60px;
-    line-height: 70px;
-
-    /*-webkit-transform: translateZ(50px);
-    -moz-transform:    translateZ(50px);
-    -ms-transform:     translateZ(50px);
-    -o-transform:      translateZ(50px);
-    transform:         translateZ(50px);*/
-}
-
-.slide h2 {
-    font-size: 25px;
-    line-height: 25px;
-    /*-webkit-transform: translateZ(50px);
-    -moz-transform:    translateZ(50px);
-    -ms-transform:     translateZ(50px);
-    -o-transform:      translateZ(50px);
-    transform:         translateZ(50px);*/
 }
 
 /*
@@ -609,7 +602,7 @@ a:focus {
     to be able to click on other steps.
 
 */
-#overview { display: none }
+#view { display: none }
 
 /*
     We also make other steps visible and give them a pointer cursor using the
