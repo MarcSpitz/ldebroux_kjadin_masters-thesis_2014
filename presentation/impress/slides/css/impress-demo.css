@@ -74,6 +74,13 @@ table {
     border-spacing: 0;
 }
 
+td {
+    padding: 10px;
+}
+
+tr {
+}
+
 /*
     Now here is when interesting things start to appear.
 
@@ -165,7 +172,7 @@ a:focus {
 
 .step {
     position: relative;
-    width: 900px;
+    width: 1500px;
     padding: 40px;
     margin: 20px auto;
 
@@ -207,10 +214,11 @@ a:focus {
     They cover everything what you see on first three steps of the demo.
 */
 .slide {
+
     display: block;
 
-    width: 900px;
-    height: 700px;
+    width: 1500px;
+    height: 1000px;
     padding: 40px 60px;
 
     background-color: white;
@@ -225,6 +233,15 @@ a:focus {
     font-size: 30px;
     line-height: 36px;
     letter-spacing: -1px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .slide q {
