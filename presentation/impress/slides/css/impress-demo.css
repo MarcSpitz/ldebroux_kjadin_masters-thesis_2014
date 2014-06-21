@@ -57,6 +57,7 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
 }
+
 /*ol, ul {
     list-style: none;
 }*/
@@ -206,7 +207,7 @@ a:focus {
     /*padding: 40px;*/
 
     height: 1200px;
-    padding: 40px 60px;
+    padding: 60px 200px;
 
     margin: 20px auto;
 
