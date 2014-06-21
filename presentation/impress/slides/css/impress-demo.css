@@ -148,6 +148,7 @@ a:focus {
 
 .bigpadding td {
     padding: 100px;
+    padding: 60px 300px;
 }
 
 .midpadding td {
@@ -159,7 +160,7 @@ a:focus {
 }
 
 .nopadding td {
-    padding: 0px;
+    padding: 0px 0px;
 }
 
 .vertical-center {
@@ -207,7 +208,7 @@ a:focus {
     /*padding: 40px;*/
 
     height: 1200px;
-    padding: 60px 200px;
+    padding: 60px 100px;
 
     margin: 20px auto;
 
@@ -263,7 +264,7 @@ a:focus {
 
 .step h1 {
     font-size: 100px;
-    line-height: 120px;
+    line-height: 1.2;
 
     /*-webkit-transform: translateZ(50px);
     -moz-transform:    translateZ(50px);
@@ -274,7 +275,7 @@ a:focus {
 
 .step h2 {
     font-size: 60px;
-    line-height: 70px;
+    line-height: 1.2;
     /*-webkit-transform: translateZ(50px);
     -moz-transform:    translateZ(50px);
     -ms-transform:     translateZ(50px);
@@ -283,8 +284,8 @@ a:focus {
 }
 
 .step h3 {
-    font-size: 25px;
-    line-height: 25px;
+    font-size: 40px;
+    line-height: 1.2;
     /*-webkit-transform: translateZ(50px);
     -moz-transform:    translateZ(50px);
     -ms-transform:     translateZ(50px);
@@ -316,6 +317,16 @@ a:focus {
 .slide {
     background-color: white;
 }
+
+.dynamic {
+
+}
+
+.impress-enabled .dynamic {
+    opacity: 0;
+}
+
+.impress-enabled .dynamic.active { opacity: 1 }
 
 .centered {
     text-align: center;
