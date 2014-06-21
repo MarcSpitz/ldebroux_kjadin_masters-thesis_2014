@@ -81,6 +81,10 @@ td {
 tr {
 }
 
+h1 {
+
+}
+
 /*
     Now here is when interesting things start to appear.
 
@@ -233,6 +237,7 @@ a:focus {
     font-size: 30px;
     line-height: 36px;
     letter-spacing: -1px;
+
 }
 
 .centered {
@@ -245,6 +250,7 @@ a:focus {
 }
 
 .slide q {
+
     display: block;
     font-size: 50px;
     line-height: 72px;
@@ -254,6 +260,27 @@ a:focus {
 
 .slide q strong {
     white-space: nowrap;
+}
+
+.slide h1 {
+    font-size: 70px;
+    line-height: 70px;
+
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
+}
+
+.slide h2 {
+    font-size: 25px;
+    line-height: 25px;
+    /*-webkit-transform: translateZ(50px);
+    -moz-transform:    translateZ(50px);
+    -ms-transform:     translateZ(50px);
+    -o-transform:      translateZ(50px);
+    transform:         translateZ(50px);*/
 }
 
 /*
