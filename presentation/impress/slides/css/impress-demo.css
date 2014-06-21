@@ -224,8 +224,8 @@ a:focus {
     text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
 
     font-family: 'Open Sans', Arial, sans-serif;
-    font-size: 30px;
-    line-height: 36px;
+    font-size: 40px;
+    line-height: 1.5;
     letter-spacing: -1px;
 }
 

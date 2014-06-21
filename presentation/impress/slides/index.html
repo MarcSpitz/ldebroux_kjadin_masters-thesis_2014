@@ -198,10 +198,12 @@
 
     </div>
 
+    <!-- data-z is at 2300 but the camera looks at 2200 on the slide-show
+    This is because the camera of the other 'overview's is at 2200
+    Setting the value to 2300 helps positioning the text correctly -->
     <div id="overview" class="step centered" data-x="0" data-y="0" data-z="2300">
       <h1>Overview</h1>
     </div>
-
 
 
     <!-- Description -->
@@ -211,23 +213,24 @@
 
 
     <div class="step slide" data-x="-1300" data-y="-1000" data-z="500" data-scale=".25">
-      <p><b>Multicast</b> service</p>
-      <ul>
-        <li>Coffee</li>
-        <li>Tea
-          <ul>
-            <li>Black tea</li>
-            <li>Green tea
-              <ul>
-                <li>China</li>
-                <li>Africa</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>Milk</li>
-      </ul>
-
+      <h1 class="centered"><b>Multicast</b> service</h1>
+      <p>
+        <ul>
+          <li>Coffee</li>
+          <li>Tea
+            <ul>
+              <li>Black tea</li>
+              <li>Green tea
+                <ul>
+                  <li>China</li>
+                  <li>Africa</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>Milk</li>
+        </ul>
+      </p>
     </div>
 
 
