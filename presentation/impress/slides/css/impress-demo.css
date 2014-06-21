@@ -75,7 +75,7 @@ table {
 }
 
 td {
-    padding: 10px;
+    padding: 50px;
 }
 
 tr {
@@ -142,6 +142,22 @@ a:focus {
 
     And then we hide the message, when support is detected in the browser.
 */
+
+.width50 {
+    width: 70%;
+}
+
+.vertical-center {
+    vertical-align: middle;
+}
+
+.vertical-top {
+    vertical-align: top;
+}
+
+.vertical-bottom {
+    vertical-align: bottom;
+}
 
 .fallback-message {
     font-family: sans-serif;
