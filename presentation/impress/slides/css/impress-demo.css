@@ -341,6 +341,14 @@ a:focus {
 
 .impress-enabled .fullvisible.active { opacity: 1 }
 
+.impress-enabled .noclick { pointer-events: none }
+
+div#results{
+  width: 1000px;
+  left: 800px;
+  top: 700px;
+  position: absolute;
+}
 
 .centered {
     text-align: center;
@@ -639,6 +647,7 @@ a:focus {
     cursor: pointer;
 }
 
+#overview{ pointer-events: none }
 
 /*
     Now, when we have all the steps styled let's give users a hint how to navigate
