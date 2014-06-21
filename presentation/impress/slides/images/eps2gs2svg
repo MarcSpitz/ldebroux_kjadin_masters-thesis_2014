@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for file in "$@"
+do
+gs -dNOPAUSE -dEPSFitPage -sDEVICE=svg -sOutputFile="${file%.*}.svg" "$file" quit.ps;
+done
