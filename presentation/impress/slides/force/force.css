@@ -1,0 +1,47 @@
+
+circle.node {
+  stroke: #999;
+  stroke-width: 1.5px;
+  fill: #000;
+}
+
+circle.node.client {
+  fill: #00F;
+}
+
+circle.node.root {
+  fill: #0C0;
+}
+
+circle.node.shaded {
+  fill: #BBB;
+}
+
+path.link {
+  /*stroke: #999;*/
+  stroke: #111;
+  stroke-opacity: .6;
+  stroke-width: 2px;
+}
+
+/*.legend {
+    padding: 5px;
+    font: 10px sans-serif;
+    background: yellow;
+    box-shadow: 2px 2px 1px #888;
+}*/
+
+.circletext {
+  font-weight: bold;
+  font-size: 12px;
+  font-family: sans-serif;
+  pointer-events: none;
+  /*text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;*/
+}
+
+text.legend {
+  font-size: 30px;
+  font-family: monospace;
+  pointer-events: none;
+  /*text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;*/
+}

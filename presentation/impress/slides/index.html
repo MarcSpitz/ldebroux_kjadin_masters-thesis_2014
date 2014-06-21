@@ -94,6 +94,17 @@
     
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+
+    <!-- d3 -->
+    <script type="text/javascript" src="js/d3/d3.min.js"></script>
+    <script type="text/javascript" src="js/d3/d3.geom.min.js"></script>
+    <script type="text/javascript" src="js/d3/d3.layout.min.js"></script>
+    
+    <!-- force -->
+    <script type="text/javascript" src="force/force.js"></script>
+    <link rel="stylesheet" href="force/force.css" media="all"></link>
+
 </head>
 
 <!--
@@ -551,11 +562,64 @@
       <!-- Stack -->
       <div class="step border slide" data-x="-500" data-y="800" data-z="500" data-scale=".25">
         <h1 class="centered">Evaluation</h1>
-        <h2 class="bigpadding" style="line-height: 2;">
+        <h2 style="line-height: 1.5;">
         <ul>
-          <li>todo</li>
+          <li>Scenario (join/leave events)
+            <ul>
+              <li>No available data</li>
+              <li>&#8658; Probabilistically generated</li>
+            </ul>
+          </li>
+          <br/>
+          <li>Metric for comparing quality:
+            <ul>
+              <li>Average cost of the tree throughout its construction</li>
+              <li>Takes the building process into account</li>
+            </ul>
+          </li>
         </ul>
         </h2>
+      </div>
+
+      <!-- Stack -->
+
+      <div class="step fullvisible" data-x="0" data-y="800" data-z="500" data-scale=".25">
+        <h1 class="centered">PIM-SSM</h1>
+        <h2 style="line-height: 1.5;">
+        <div id="d3_pim_svg"></div>
+        <script type="text/javascript">fillDiv("d3_pim_svg", "force/sota_setup-2_index-0.json", 1400, 900)</script>
+        </h2>
+      </div>
+
+      <div class="step fullvisible" data-x="350" data-y="800" data-z="500" data-scale=".25">
+        <h1 class="centered">Greedy</h1>
+        <h2 style="line-height: 1.5;">
+        <div id="d3_greedy_svg"></div>
+        <script type="text/javascript">fillDiv("d3_greedy_svg", "force/sota_setup-1_index-0.json", 1400, 900)</script>
+        </h2>
+      </div>
+
+      <div class="step fullvisible" data-x="0" data-y="1075" data-z="500" data-scale=".25">
+        <h1 class="centered">Optimisation</h1>
+        <h2 style="line-height: 1.5;">
+        <div id="d3_opti_svg"></div>
+        <script type="text/javascript">fillDiv("d3_opti_svg", "force/sota_setup-0_index-0.json", 1400, 900)</script>
+        </h2>
+      </div>
+
+      <div class="step fullvisible" data-x="350" data-y="1075" data-z="500" data-scale=".25">
+        <div class="midpadding">
+          <h1 style="line-height: 1.5;">
+          Improvement over PIM-SSM
+          <ul>
+            <li>Greedy: 21%</li>
+            <li>Optimised: 28%</li>
+          </ul>
+          </h1>
+        </div>
+      </div>
+
+      <div class="step border centered" data-x="175" data-y="925" data-z="500" data-scale=".5">
       </div>
 
 </div>

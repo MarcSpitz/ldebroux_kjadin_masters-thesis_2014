@@ -331,6 +331,17 @@ a:focus {
 
 .impress-enabled .dynamic.active { opacity: 1 }
 
+.fullvisible {
+
+}
+
+.impress-enabled .fullvisible {
+    opacity: 1;
+}
+
+.impress-enabled .fullvisible.active { opacity: 1 }
+
+
 .centered {
     text-align: center;
 }
