@@ -38,6 +38,11 @@
     <script type="text/javascript" src="js/d3/d3.geom.min.js"></script>
     <script type="text/javascript" src="js/d3/d3.layout.min.js"></script>
     
+    <!-- nv -->
+    <link href="nv/nv.d3.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="nv/d3.v2.js"></script>
+    <script type="text/javascript" src="nv/nv.d3.js"> </script>
+
     <!-- force -->
     <script type="text/javascript" src="force/force.js"></script>
     <link rel="stylesheet" href="force/force.css" media="all"></link>
@@ -582,6 +587,46 @@
               <li>Greedy: 21%</li>
               <li>Optimised: 28%</li>
             </ul>
+
+            <div id ="Chart3" style="height:225px; width:500px;padding-left:50px;">
+              <svg>
+              </svg>
+            </div>
+             <script type="text/javascript">
+        var data3 = [{"values": [["PIM-SSM", 100.0], ["Greedy", 79.0], ["Optimised", 72.0]], "key": "value"}
+                    ,{"values": [["PIM-SSM", 0.0], ["Greedy", 21.0], ["Optimised", 28.0]], "key": "improvement"}
+                      ];
+        var d3_colorset = ['#297fff', '#ff0000', '#7137f8', '#00d400', '#ff7f2a', '#808080', '#000000', '#ffcc00', '#37c8ab', '#ff2ad4'];
+            
+        d3.scale.colorset = function() {
+        return d3.scale.ordinal().range(d3_colorset);
+        };  
+        nv.addGraph(function() { 
+
+              var chart3 = nv.models.multiBarChart()
+               .x(function(d) { return d[0] })
+               .y(function(d) { return d[1] })
+               .color(d3.scale.colorset().range());
+               
+                chart3.xAxis
+                .axisLabel('')
+                // .tickFormat(d3.format(',.1f'))
+                ;
+
+                chart3.yAxis
+                .tickFormat(d3.format(',.1f'))
+                .axisLabel('');
+
+              d3.select('#Chart3 svg')
+                  .datum(data3)
+                .transition().duration(500)
+                  .call(chart3);
+
+              //nv.utils.windowResize(chart.update);
+
+              return chart3;
+            });
+    </script>
         
         </div>
       </div>
