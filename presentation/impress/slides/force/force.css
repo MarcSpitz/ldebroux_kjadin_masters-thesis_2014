@@ -14,7 +14,7 @@ circle.node.root {
 }
 
 circle.node.shaded {
-  fill: #BBB;
+  fill: #CCC;
 }
 
 path.link {
@@ -40,7 +40,7 @@ path.link {
 }
 
 text.legend {
-  font-size: 30px;
+  font-size: 46px;
   font-family: monospace;
   pointer-events: none;
   /*text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;*/

@@ -345,8 +345,10 @@ a:focus {
 
 div#results{
   width: 1000px;
-  left: 800px;
+  left: 850px;
   top: 700px;
+  font-size: 50px;
+  line-height: 1.3;
   position: absolute;
 }
 

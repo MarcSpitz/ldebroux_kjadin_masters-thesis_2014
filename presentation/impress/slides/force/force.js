@@ -131,11 +131,11 @@ function fillDiv(divName, jsonFile, width, height) {
       legend.append("svg:tspan")
             .attr("x", legendX)
             .attr("dy", textdy)
-            .text("average weight  = " + json.treeInfo.avgWeight);
+            .text("average cost  = " + json.treeInfo.avgWeight);
       legend.append("svg:tspan")
             .attr("x", legendX)
             .attr("dy", textdy)
-            .text("weight     = " + json.treeInfo.weight);     
+            .text("final cost     = " + json.treeInfo.weight);     
       legend.append("svg:tspan")
             .attr("x", legendX)
             .attr("dy", textdy)
