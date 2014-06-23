@@ -333,7 +333,7 @@
         <table class="center centered bigpadding">
           <tr>
             <td>
-              <h2>PIM-SSM</h2>
+              <h2>Classical (PIM-SSM)</h2>
               <br/>
               <img src="images/pim_vs_sdn_pim.svg" height="110%"></img>
             </td>
@@ -419,7 +419,6 @@
             <ul>
               <li>Whole tree computation is expensive</li>
               <li>Tree stability</li>
-              <li>&#8658; Local search approach</li>
             </ul>
           </li>
           <li>Two complementary and <b>independent</b> parts:
@@ -477,12 +476,13 @@
       <!-- Optimisation -->
       <div class="step border slide" data-x="1000" data-y="-200" data-z="500" data-scale=".25">
         <h1 class="centered">Optimisation procedure</h1>
-        <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
+        <h2 class="bigpadding" style="line-height: 1.8; padding-top: 0px">
         <ul>
           <li><b>Fixed</b> allocated time</li>
-          <li>Based on <b>perturbations</b> (local search)
+          <li><b>Local search</b> approach
             <ul>
-              <li><b>Replace</b> a path by another</li>
+              <li><b>Replace</b> paths by others</li>
+              <li>Based on successive <b>perturbations</b></li>
             </ul>
           </li>
           <li>Parameters
@@ -521,36 +521,40 @@
       <!-- Stack -->
       <div class="step border slide" data-x="-500" data-y="550" data-z="500" data-scale=".25">
         <h1 class="centered">Evaluation</h1>
-        <br/>
-        <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
-          Experiments:
-        <ul>
-          <li>Assessing tree quality</li>
-          <li>Time requirements</li>
-          <li>Impact of improving</li>
-        </ul>
+        <h2 class="bigpadding" style="line-height: 1.8; padding-top: 0px">
+          <ul>
+            <li>Experiments:
+              <ul>
+                <li>Assessing tree quality</li>
+                <li>Time requirements</li>
+                <li>Impact of improving</li>
+              </ul>
+            </li>
+            <li>Scenario (join/leave events)
+              <ul>
+                <li>No available data</li>
+                <li>&#8658; Probabilistically generated</li>
+              </ul>
+            </li>
+          </ul>
         </h2>
       </div>
 
       <!-- Tree quality -->
       <div class="step border slide" data-x="-500" data-y="550" data-z="250" data-scale=".25">
         <h1 class="centered">Tree quality</h1>
-        <h2 class="bigpadding" style="line-height: 1.6; padding-top: 0px">
-        <ul>
-          <li>Metric for comparing quality:
-            <ul>
-              <li>Average cost of the tree throughout its construction</li>
-              <li>Takes the building process into account</li>
-            </ul>
-          </li>
-          <li>Scenario (join/leave events)
-            <ul>
-              <li>No available data</li>
-              <li>&#8658; Probabilistically generated</li>
-            </ul>
-          </li>
-          <li>PIM-SSM vs Greedy vs Optimisation </li>
-        </ul>
+        <h2 class="bigpadding" style="line-height: 1.8; padding-top: 0px">
+          <br/>
+          <ul>
+            <li>Metric for comparing quality:
+              <ul>
+                <li>Average cost of the tree throughout its construction</li>
+                <li>Takes the building process into account</li>
+              </ul>
+            </li>
+            <br/>
+            <li>PIM-SSM vs Greedy vs Optimisation </li>
+          </ul>
         </h2>
       </div>
 
@@ -677,19 +681,20 @@
       <div class="step border slide" data-x="-500" data-y="900" data-z="0" data-scale=".25">
         <h1 class="centered">Time requirements</h1>
         <br/>
+        <h2 class="centered">Conclusion</h2>
+        <br/>
         <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
-          Conclusion on time requirements:
           <ul>
             <li>Events handling is <b>fast</b></li>
             <li><b>Little time</b> needed to improve significantly</li>
           </ul>
-          &#8658; The algorithm is suited for real applications
+          &#8658; Algorithm suited for real applications
         </h2>
       </div>
 
       <!-- Stack -->
       <!-- Impact of improving -->
-      <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="500" data-scale=".25">
+      <!-- <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="500" data-scale=".25">
         <h1 class="centered">Impact of improving</h1>
         <br/>
         <table class="center centered smlpadding">
@@ -710,15 +715,15 @@
             </td>
           </tr>
         </table>
-      </div>
+      </div> -->
 
-      <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="250" data-scale=".25">
+      <div class="step border slide nopadding" data-x="-500" data-y="1250" data-z="500" data-scale=".25">
         <h1 class="centered">Impact of improving</h1>
         <br/>
         <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
           <ul>
-            <li>Improving too often is pointless</li>
-            <li>Improving has a great impact on the tree</li>
+            <li>Improving has a <b>great impact</b> on the tree<br/>10 to 40% nodes impacted</li>
+            <li>Improving too often is <b>pointless</b></li>
           </ul>
           &#8658; Not every improvement found should be applied: "Is it worth it ?" 
         </h2>
@@ -736,9 +741,9 @@
       <h2 class="bigpadding" style="line-height: 2; padding-top: 0px">
         <ul>
           <li>Conditions to apply an improvement</li>
+          <li>Integration to a SDN controller</li>
           <li>Failure recovery</li>
           <li>Load balancing</li>
-          <li>Integration to a SDN controller</li>
         </ul>
       </h2>
     </div>
@@ -797,7 +802,7 @@
           <tr>
             <td colspan="2">
               <br/>
-              ... and many others
+              ... and everybody else !
             </td>
           </tr>
         </table>
@@ -806,7 +811,8 @@
     </div>
 
     <!-- Thanks -->
-    <div class="step border slide dynamic" data-x="0" data-y="0" data-z="5500" data-rotate-y="0">   
+    <div class="step border slide dynamic" data-x="0" data-y="0" data-z="5500" data-rotate-y="0"> 
+    <!-- <div class="step border slide dynamic" data-x="0" data-y="0" data-z="5500" data-rotate-y="-180" data-rotate-x="180" data-rotate-z="180"> -->    
       <h1 class="centered bigpadding" style="line-height: 2;">
         Thank you for your attention !<br/>
         <br/>
